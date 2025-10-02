@@ -47,6 +47,8 @@ app.post("/computeHash", (req, res) => {
 // ===============================
 // 💳 S2S Payment POST function
 // ===============================
+let lastPayment = null; // 🆕 stockage en mémoire du dernier paiement
+
 app.post("/processPayment", async (req, res) => {
   try {
     const { environment, ...rawParams } = req.body;
@@ -102,7 +104,7 @@ app.post("/processPayment", async (req, res) => {
     console.log("=== Réponse Dalenys ===");
     console.log(text);
 
-    // 🟢 NEW : return both request and response
+    // 🟢 return both request and response
     let parsedResponse;
     try {
       parsedResponse = JSON.parse(text);
@@ -110,17 +112,34 @@ app.post("/processPayment", async (req, res) => {
       parsedResponse = { raw: text };
     }
 
-    res.json({
-      requestSent: cleanParams,      // ce que tu as envoyé
-      response: parsedResponse,      // la réponse brute
-      ...parsedResponse              // rétrocompatibilité (EXECCODE, MESSAGE…)
-    });
+    const result = {
+      requestSent: cleanParams,   // ce que tu as envoyé
+      response: parsedResponse,   // la réponse brute
+      ...parsedResponse           // rétrocompatibilité (EXECCODE, MESSAGE…)
+    };
+
+    // 🆕 on sauvegarde côté serveur
+    lastPayment = result;
+
+    res.json(result);
 
   } catch (err) {
     console.error("❌ Erreur S2S Payment:", err);
     res.status(500).json({ error: err.message });
   }
 });
+
+// ===============================
+// 🌐 Endpoint pour récupérer le dernier paiement
+// ===============================
+app.get("/lastPayment", (req, res) => {
+  if (lastPayment) {
+    res.json(lastPayment);
+  } else {
+    res.status(404).json({ error: "Aucun paiement enregistré" });
+  }
+});
+
 
 
 
