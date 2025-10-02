@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paiement sécurisé Dalenys – S2S</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ======= HEADER regroupé ======= -->
+  <header id="main-header">
+    <div id="top-left-corner">
+      <a href="index.html" class="back-home-btn">← Home page</a>
+      <button id="open-test-cards" class="primary">Click here to display test cards</button>
+    </div>
+
+    <div class="theme-switch-wrapper">
+      <span class="theme-label">Light Mode </span>
+      <label class="theme-switch" for="theme-toggle">
+        <input type="checkbox" id="theme-toggle" />
+        <span class="slider round"></span>
+      </label>
+      <span class="theme-label">Dark Mode</span>
+    </div>
+  </header>
+
+  <div id="payment-wrapper">
+    <!-- ======= Bloc Use-cases ======= -->
+    <div id="use-cases-panel" class="panel"></div>
+
+    <!-- ======= FORMULAIRE S2S ======= -->
+    <form id="s2s-form" class="panel">
+      <h3>Paiement S2S</h3>
+
+      <input type="hidden" name="method" value="payment" />
+      <label>Identifier</label>
+      <input type="text" name="IDENTIFIER" id="identifier-field" />
+
+      <label>Card Number</label>
+      <input type="text" name="CARDCODE" value="4065600099110000" />
+
+      <label>Card CVV</label>
+      <input type="text" name="CARDCVV" value="123" />
+
+      <label>Card Validity Date (MM-YY)</label>
+      <input type="text" name="CARDVALIDITYDATE" value="01-30" />
+
+      <label>Card Full Name</label>
+      <input type="text" name="CARDFULLNAME" value="JOHN SNOW" />
+
+      <label>Operation Type</label>
+      <input type="text" name="OPERATIONTYPE" value="authorization" />
+
+      <label>Order ID</label>
+      <input type="text" name="ORDERID" id="orderid-field" />
+
+      <label>Amount (in cents)</label>
+      <input type="text" name="AMOUNT" value="1000" />
+
+      <label>Client Ident</label>
+      <input type="text" name="CLIENTIDENT" value="john.snow" />
+
+      <label>Client Email</label>
+      <input type="text" name="CLIENTEMAIL" value="john.snow@example.com" />
+
+      <label>Client Referrer</label>
+      <input type="text" name="CLIENTREFERRER" value="https://your_shop.com/order?id=1234" />
+
+      <label>Client User Agent</label>
+      <input type="text" name="CLIENTUSERAGENT" value="Mozilla/5.0" />
+
+      <label>Client IP</label>
+      <input type="text" name="CLIENTIP" value="10.1.1.1" />
+
+      <label>Description</label>
+      <input type="text" name="DESCRIPTION" value="Knows nothing" />
+
+    <input type="hidden" name="REDIRECTURLSUCCESS" id="redirect-success" />
+    <input type="hidden" name="REDIRECTURLCANCEL"  id="redirect-cancel" />
+
+
+      <!-- Champs cachés -->
+      <input type="hidden" name="VERSION" value="3.0" />
+      <input type="hidden" name="HASH" id="hash-field" />
+      <input type="hidden" name="environment" id="env-hidden" />
+
+      <p class="submit">
+        <input type="submit" value="Send S2S Payment" />
+      </p>
+    </form>
+
+    <!-- ======= Panneau Environnements ======= -->
+    <div id="env-panel" class="panel">
+      <h3>Environments</h3>
+      <label for="env-select">Choose an environment :</label>
+      <select id="env-select">
+        <option value="">-- Choose --</option>
+        <option value="new">+ New environment</option>
+      </select>
+      <label>Nom :</label>
+      <input type="text" id="env-name" placeholder="Environment name" />
+      <label>Public Key ID :</label>
+      <input type="text" id="env-public-key-id" placeholder="ex: key_sandbox_123" />
+      <label>Public Key :</label>
+      <input type="text" id="env-public-key" placeholder="ex: pk_live_abc" />
+      <label>Identifier :</label>
+      <input type="text" id="env-identifier" placeholder="ex: IDENTIFIER_123" />
+      <label>Secret Key :</label>
+      <input type="text" id="env-secret-key" placeholder="Secret Key" />
+      <button id="use-env" class="primary">Use</button>
+      <button id="delete-env" class="danger">Supprimer</button>
+    </div>
+  </div>
+
+  <!-- ======= Pop-in Cartes de test ======= -->
+  <div id="test-cards-modal" class="test-modal hidden">
+    <div class="test-modal-content">
+      <span id="close-test-cards" class="close-btn">&times;</span>
+      <h3>Cartes sandbox de test</h3>
+      <div id="test-cards-container"></div>
+    </div>
+  </div>
+
+  <!-- ======= Scripts ======= -->
+  <script src="env-manager.js"></script>
+  <script src="use-case-selection.js"></script>
+  <script src="script.js"></script>
+  <script src="test-cards.js"></script>
+
+  <script>
+  // URLs de redirection
+  document.addEventListener("DOMContentLoaded", () => {
+    const base = window.location.origin;
+    document.getElementById("redirect-success").value = `${base}/success.html`;
+    document.getElementById("redirect-cancel").value  = `${base}/success.html`;
+  });
+
+  // Gestion du formulaire S2S
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("orderid-field").value = "RND" + Date.now();
+
+    const lastEnv = localStorage.getItem("lastEnv");
+    if (lastEnv) {
+      fetch(`/api/env/${encodeURIComponent(lastEnv)}`)
+        .then(r => r.json())
+        .then(env => {
+          if (env.identifier) document.getElementById("identifier-field").value = env.identifier;
+        });
+    }
+
+    const form = document.getElementById("s2s-form");
+    const hashField = document.getElementById("hash-field");
+    const envHidden = document.getElementById("env-hidden");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const environment = localStorage.getItem("lastEnv");
+      if (!environment) {
+        alert("Please choose an environment before paying.");
+        return;
+      }
+
+      // Construire params
+      const fd = new FormData(form);
+      const params = {};
+      fd.forEach((v, k) => {
+        if (k !== "environment" && k !== "method" && k !== "HASH") {
+          params[k] = v;
+        }
+      });
+
+      try {
+        // 1️⃣ Calcul du hash
+        const resp = await fetch("/computeHash", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ environment, params })
+        });
+        const data = await resp.json();
+        if (!data.hash) throw new Error("Erreur calcul hash");
+        hashField.value = data.hash;
+        envHidden.value = environment;
+
+        // 2️⃣ Envoi du paiement
+        params.HASH = data.hash;
+        params.environment = environment;
+        const resp2 = await fetch("/processPayment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(params)
+        });
+        const result = await resp2.json();
+        console.log("Réponse S2S:", result);
+
+        // 3️⃣ Gestion des cas
+        if (result.REDIRECTHTML) {
+          // 🟢 Cas 3DS avec HTML encodé en base64 → plein écran
+          const decoded = atob(result.REDIRECTHTML);
+          document.open();
+          document.write(decoded);
+          document.close();
+        }
+        else if (result.REDIRECTURL) {
+          // 🟢 Cas 3DS avec URL + POST params
+          const form3ds = document.createElement("form");
+          form3ds.method = "POST";
+          form3ds.action = result.REDIRECTURL;
+
+          const params3ds = new URLSearchParams(result.REDIRECTPOSTPARAMS);
+          params3ds.forEach((v, k) => {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = k;
+            input.value = v;
+            form3ds.appendChild(input);
+          });
+
+          document.body.appendChild(form3ds);
+          form3ds.submit();
+        } 
+        else {
+          if (result.EXECCODE && result.EXECCODE !== "0000") {
+            alert("❌ Erreur: " + (result.MESSAGE || "Réponse inconnue"));
+          }
+          // ✅ Toujours redirection vers success.html avec détails
+          const dataEncoded = encodeURIComponent(JSON.stringify(result));
+          window.location.href = `/success.html?data=${dataEncoded}`;
+        }
+      } catch (err) {
+        console.error("Erreur S2S:", err);
+        alert("Impossible de traiter le paiement: " + err.message);
+        const errorData = encodeURIComponent(JSON.stringify({ error: err.message }));
+        window.location.href = `/success.html?data=${errorData}`;
+      }
+    });
+  });
+
+  // Cartes de test
+  document.addEventListener("DOMContentLoaded", () => {
+    const modal   = document.getElementById("test-cards-modal");
+    const openBtn = document.getElementById("open-test-cards");
+    const closeBtn= document.getElementById("close-test-cards");
+    openBtn.addEventListener("click", () => {
+      buildTestCardsTable();
+      modal.classList.remove("hidden");
+    });
+    closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
+    modal.addEventListener("click", e => { if (e.target === modal) modal.classList.add("hidden"); });
+  });
+</script>
+
+
+</body>
+</html>

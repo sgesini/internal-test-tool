@@ -1,0 +1,9 @@
+Comment utiliser l'outil?
+
+1. installer node.js sur la machine : https://nodejs.org/en/download/
+
+2. faire un "npm install" dans le terminal
+
+3. faire un "npm start" dans le terminal pour lancer le serveur local
+
+4. aller sur l'url : http://localhost:3000/ & enjoy

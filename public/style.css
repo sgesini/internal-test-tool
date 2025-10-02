@@ -1,0 +1,515 @@
+body * {
+  font-family: "Open Sans", "Century Gothic", "Calibri", "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 1em;
+  transition: all 250ms ease-in-out;
+}
+
+:root {
+  --background-color: #fff;
+  --text-color: #000;
+  --input-border-color: rgba(0, 0, 0, 0.5);
+  --input-background: #fff;
+  --button-background: rgb(14, 206, 14);
+  --button-hover-background: forestgreen;
+}
+
+body.dark-mode {
+  --background-color: #222;
+  --text-color: #eee;
+  --input-border-color: rgba(255, 255, 255, 0.5);
+  --input-background: #333;
+  --button-background: #305f88;
+  --button-hover-background: #3d78ac;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.theme-switch-wrapper {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+.theme-label { margin: 0 10px; }
+.theme-switch { display:inline-block; height:24px; position:relative; width:48px; }
+.theme-switch input { display:none; }
+.slider {
+  background-color: #ccc;
+  bottom: 0; cursor: pointer; left: 0; position: absolute; right: 0; top: 0;
+  transition: 0.4s;
+}
+.slider:before {
+  background-color: #fff;
+  bottom: 4px; content: "";
+  height: 16px; left: 4px; position: absolute;
+  transition: 0.4s; width: 16px;
+}
+input:checked + .slider { background-color: #3e96db; }
+input:checked + .slider:before { transform: translateX(24px); }
+.slider.round { border-radius: 24px; }
+.slider.round:before { border-radius: 50%; }
+
+/* === Bloc formulaire paiement === */
+form#cart {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 30px;
+  background: var(--background-color);
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+}
+form#cart p,
+form#cart p label { display: block; width: 100%; }
+form#cart p:nth-child(1) { position: relative; }
+
+/* Conteneur d'iframe des hosted fields */
+.input-container {
+  display: block;
+  width: 110%;
+  /* hauteur contrôlable ici */
+  height: 44px;
+  overflow: hidden;
+  box-sizing: border-box;
+  margin-top: 6px;
+  border: 1px solid var(--input-border-color);
+  border-radius: 6px;
+  background-color: var(--input-background);
+}
+
+#payment-wrapper {
+  display: flex;
+  flex-direction: row;      /* ← ordre normal gauche-centre-droite */
+  justify-content: center;  /* ou space-between si vous voulez étirer */
+  align-items: flex-start;
+  gap: 40px;
+  margin-top: 40px;
+}
+
+/* Supprime les anciennes limitations */
+#brand-container {
+  position: absolute;
+  top: 30px;
+  right: 20px;
+  display: inline-block;
+  width: 145px;
+  max-width: 100%;
+  height: 30px;
+  box-sizing: border-box;
+}
+#card-container,
+#expiry-container,
+#cvv-container {
+  width: 100%;
+  /* plus de max-height ici */
+}
+
+label { vertical-align: super; }
+p { margin-bottom: 18px; }
+
+/* expiration + CVV sur une ligne */
+.pair-fields {
+  display: flex;
+  gap: 16px;
+}
+.pair-fields p {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.submit { margin-top: 24px; text-align: center; }
+input[type="submit"] {
+  width: 100%;
+  max-width: 100%;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--button-background);
+  font-size: 1.4em;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+input[type="submit"]:hover {
+  background-color: var(--button-hover-background);
+}
+
+/* === Bloc cartes de test === */
+#test-cards-panel {
+  flex: 0 0 480px;
+  max-width: 480px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 16px;
+  border-radius: 8px;
+  background: var(--background-color);
+  font-size: 0.85rem;
+  overflow-y: auto;
+  max-height: 80vh;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+}
+#test-cards-table {
+  font-size: 0.85rem;
+  table-layout: auto;
+  width: 100%;
+}
+#test-cards-table th:nth-child(2),
+#test-cards-table td:nth-child(2) {
+  width: 180px;
+  word-break: break-all;
+}
+#test-cards-table th:nth-child(3),
+#test-cards-table td:nth-child(3) {
+  width: 70px;
+}
+#test-cards-table th,
+#test-cards-table td {
+  padding: 4px 6px;
+  text-align: left;
+}
+#test-cards-table th {
+  font-weight: bold;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+}
+#test-cards-table td {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+.copy-btn {
+  background: #1e3a8a;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-family: monospace;
+  font-size: 1rem;
+  min-width: 160px;
+}
+.copy-btn:hover { background: #2563eb; }
+
+/* === Bloc environnements === */
+#env-panel {
+  background: var(--background-color);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+  min-width: 280px;
+}
+#env-panel h3 {
+  margin-bottom: 16px;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+#env-panel label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+#env-panel input[type="text"],
+#env-panel input[type="password"],
+#env-panel select {
+  width: 90%;
+  padding: 10px 12px;
+  border: 1px solid var(--input-border-color);
+  border-radius: 6px;
+  background: var(--input-background);
+  margin-bottom: 8px;
+  color: var(--text-color);
+}
+body.dark-mode #env-panel input[type="text"],
+body.dark-mode #env-panel select {
+  color: #fff;
+}
+#use-env {
+  margin-top: 20px;
+  width: 100%;
+  background: var(--button-background);
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color .2s ease;
+}
+#use-env:hover { background: var(--button-hover-background); }
+#delete-env {
+  margin-top: 20px;
+  width: 100%;
+  background: var(--button-background);
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color .2s ease;
+}
+#delete-env:hover { background: var(--button-hover-background); }
+
+@media (max-width: 1000px) {
+  #payment-wrapper { flex-direction: column; }
+  #test-cards-panel, form#cart { width: 100%; max-width: none; }
+  .pair-fields { flex-direction: column; }
+}
+
+/* === Bloc central Hosted Forms === */
+#hosted-forms.panel {
+  background: var(--background-color);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+  min-width: 330px;
+}
+
+#s2s-form.panel {
+  background: var(--background-color);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+  min-width: 400px;
+}
+
+/* Uniformiser les labels et inputs comme dans le panneau env */
+#hosted-forms.panel label,
+#s2s-form.panel label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+#hosted-forms.panel input[type="text"],
+#hosted-forms.panel input[type="email"],
+#s2s-form.panel input[type="text"],
+#s2s-form.panel input[type="email"] {
+  width: 95%;
+  padding: 10px 12px;
+  border: 1px solid var(--input-border-color);
+  border-radius: 6px;
+  background: var(--input-background);
+  margin-bottom: 8px;
+  color: var(--text-color);
+  font-family: inherit;
+  font-size: 1em;
+}
+
+/* Bouton de soumission aligné sur les boutons du panel env */
+#hosted-forms.panel input[type="submit"],
+#s2s-form.panel input[type="submit"] {
+  margin-top: 20px;
+  width: 100%;
+  background: var(--button-background);
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color .2s ease;
+}
+#hosted-forms.panel input[type="submit"]:hover,
+#s2s-form.panel input[type="submit"]:hover {
+  background: var(--button-hover-background);
+}
+
+.test-modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.3s ease;
+}
+.test-modal.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.test-modal-content {
+  background: var(--background-color);
+  color: var(--text-color);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  padding: 24px;
+  max-width: 640px;
+  width: 90%;
+  max-height: 80%;
+  overflow-y: auto;
+}
+.close-btn {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+
+/* Positionne la pop-in des cartes de test à gauche */
+#test-cards-modal {
+  justify-content: flex-start;    /* colle le contenu au côté gauche */
+  align-items: center;            /* reste centré verticalement */
+  padding-left: 40px;             /* petit décalage du bord si tu veux */
+}
+
+#test-cards-modal .test-modal-content {
+  max-width: 430px;               /* largeur fixe/limitée */
+  margin-left: 0;                 /* supprime la marge auto qui centre */
+}
+
+
+.right-column {
+  display: flex;
+  flex-direction: column;        /* empile verticalement */
+  align-items: center;           /* centre le bouton comme le panel */
+}
+
+/* --- Colonne de droite : panel environnement + bouton retour --- */
+.right-column {
+  display: flex;
+  flex-direction: column;      /* empile verticalement panel + bouton */
+  align-items: center;         /* centre le bouton comme le panel */
+}
+
+/* Le conteneur ne doit pas bloquer les clics */
+#top-left-corner {
+  position: absolute;      /* garde-le dans le coin si tu veux */
+  top: 20px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;  /* aligne les boutons à gauche */
+  gap: 16px;
+  background: transparent;  /* aucun fond */
+  z-index: 1000;            /* au-dessus des autres éléments */
+  pointer-events: auto;     /* s’assure que les clics passent */
+}
+
+/* Le lien reste cliquable */
+.back-home-btn {
+  display: inline-block;
+  background: var(--button-background);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 6px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+  z-index: 1001;            /* passe devant d’éventuels recouvrements */
+}
+.back-home-btn:hover {
+  background: var(--button-hover-background);
+  transform: translateY(-2px);
+}
+
+
+/* Responsive : pleine largeur en mode colonne */
+@media (max-width: 1000px) {
+  .back-home-btn {
+    width: 100%;
+  }
+}
+
+#use-cases-panel {
+  background: var(--background-color);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(255,255,255,0.15);
+  min-width: 400px;
+  max-width: 500px;
+  margin-bottom: 24px;
+  max-height: 600px;       /* hauteur max visible */
+  overflow-y: auto;        /* active la barre de scroll verticale */
+  padding-right: 8px;      /* petit espace pour la scrollbar */
+}
+
+#use-cases-panel button.primary {
+  background: var(--button-background);
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+/* Optionnel : style de la scrollbar (Chrome/Edge/Safari) */
+#use-cases-panel::-webkit-scrollbar {
+  width: 6px;
+}
+#use-cases-panel::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.3);
+  border-radius: 3px;
+}
+body.dark-mode #use-cases-panel::-webkit-scrollbar-thumb {
+  background-color: rgba(255,255,255,0.3);
+}
+#use-cases-panel button.primary:hover {
+  background: var(--button-hover-background);
+}
+
+#use-cases-panel button.danger {
+  background: #c53030;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+#use-cases-panel button.danger:hover {
+  background: #a11c1c;
+}
+
+/* Labels des champs ajoutés dynamiquement - s2s-form */
+#s2s-form .uc-label {
+  color: green;
+  font-weight: 600;      /* optionnel pour un vert plus visible */
+}
+
+/* Labels des champs ajoutés dynamiquement */
+.uc-label {
+  color: green;
+  font-weight: 600;      /* optionnel pour un vert plus visible */
+}
+
+/* ==== HEADER ==== */
+#main-header {
+  display: flex;
+  justify-content: space-between;  /* gauche/droite */
+  align-items: center;
+  padding: 20px 30px;
+  background: var(--background-color);
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+#top-left-corner {
+  position: static;      /* plus de position absolute */
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+

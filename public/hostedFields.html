@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paiement sécurisé Dalenys</title>
+  <script src="https://js.sandbox.dalenys.com/hosted-fields/v2.2.0/hosted-fields.min.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Sélecteur de thème -->
+  <div class="theme-switch-wrapper">
+    <span class="theme-label">Light Mode </span>
+    <label class="theme-switch" for="theme-toggle">
+      <input type="checkbox" id="theme-toggle" />
+      <span class="slider round"></span>
+    </label>
+    <span class="theme-label">Dark Mode</span>
+  </div>
+
+  <!-- Navigation -->
+  <div id="top-left-corner">
+    <a href="index.html" class="back-home-btn">← Home page</a>
+    <button id="open-test-cards" class="primary">Click here to display test cards</button>
+  </div>
+
+  <div id="payment-wrapper" style="justify-content:center;gap:40px;">
+
+    <!-- FORMULAIRE Paiement -->
+    <form method="post" action="javascript:void(0);" id="cart" name="dalenysForm" onsubmit="return tokenizeHandler()">
+      <p>
+        <label>Card number</label>
+        <span class="input-container" id="card-container"></span>
+        <span id="brand-container"></span>
+      </p>
+      <div class="pair-fields">
+        <p>
+          <label>Card expiry</label>
+          <span class="input-container" id="expiry-container"></span>
+        </p>
+        <p>
+          <label>Card security code</label>
+          <span class="input-container" id="cvv-container"></span>
+        </p>
+      </div>
+      <p class="submit">
+        <input type="submit" value="Pay">
+      </p>
+      <input type="hidden" name="hf-token" id="hf-token">
+      <input type="hidden" name="selected-brand" id="selected-brand">
+    </form>
+
+         <!-- PANEL Environnements -->
+    <div id="env-panel" class="panel">
+      <h3>Environments</h3>
+      <label for="env-select">Choose an environment :</label>
+      <select id="env-select">
+        <option value="">-- Choose --</option>
+        <option value="new">+ New environment</option>
+      </select>
+      <label>Nom :</label>
+      <input type="text" id="env-name" placeholder="Environment name" />
+      <label>Public Key ID :</label>
+      <input type="text" id="env-public-key-id" placeholder="ex: key_sandbox_123" />
+      <label>Public Key :</label>
+      <input type="text" id="env-public-key" placeholder="ex: pk_live_abc" />
+      <label>Identifier :</label>
+      <input type="text" id="env-identifier" placeholder="ex: IDENTIFIER_123" />
+      <label>Secret Key :</label>
+      <input type="text" id="env-secret-key" placeholder="Secret Key" />
+      <button id="use-env" class="primary">Use</button>
+      <button id="delete-env" class="danger">Delete</button>
+    </div>
+
+  </div>
+
+ 
+
+
+  <!-- ✅ Pop-in masquée -->
+  <div id="test-cards-modal" class="test-modal hidden">
+    <div class="test-modal-content">
+      <span id="close-test-cards" class="close-btn">&times;</span>
+      <h3>Sandbox test cards (click on the card PAN to copy)</h3>
+      <div id="test-cards-container"></div>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="env-manager.js"></script>
+<script src="script.js"></script>
+<script src="test-cards.js"></script>  
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const lastEnv = localStorage.getItem("lastEnv");
+      if (!lastEnv) {
+        console.warn("⚠️ Aucun environnement sélectionné, Hosted Fields ne peut pas s'initialiser.");
+        return;
+      }
+
+      try {
+        const resp = await fetch("/api/environments");
+        if (!resp.ok) throw new Error("Impossible de charger les environnements");
+        const envs = await resp.json();
+
+        const env = envs[lastEnv];
+        if (!env) {
+          console.error("❌ Environnement introuvable:", lastEnv);
+          return;
+        }
+
+        // 🔑 Injection de la config globale pour Hosted Fields
+        window.APP_CONFIG = {
+          publicKeyId: env.publicKeyId,
+          publicKey: env.publicKey,
+          identifier: env.identifier
+        };
+
+        // ⚡ Initialise Hosted Fields (script.js fournit la fonction)
+        if (typeof initializeHostedFields === "function") {
+          initializeHostedFields();
+        }
+      } catch (err) {
+        console.error("Erreur lors du chargement de l'environnement:", err);
+      }
+    });
+
+    // ouverture/fermeture pop-in cartes test
+    document.addEventListener("DOMContentLoaded", () => {
+      const modal   = document.getElementById("test-cards-modal");
+      const openBtn = document.getElementById("open-test-cards");
+      const closeBtn= document.getElementById("close-test-cards");
+      openBtn.addEventListener("click", () => {
+        buildTestCardsTable();
+        modal.classList.remove("hidden");
+      });
+      closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
+      modal.addEventListener("click", e => {
+        if (e.target === modal) modal.classList.add("hidden");
+      });
+    });
+  </script>
+</body>
+</html>

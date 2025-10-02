@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Résultat du paiement</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background: radial-gradient(circle at top, #0f2027, #203a43, #2c5364);
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      font-family: "Segoe UI", Roboto, sans-serif;
+      padding: 2rem;
+      gap: 1.5rem;
+    }
+    h2 { font-size: 1.6rem; margin-bottom: 1rem; }
+    .success { color: #4caf50; }
+    .failure { color: #e53935; }
+    .results-wrapper {
+      display: flex;
+      gap: 10px;
+      width: 1000px;   
+      justify-content: center; 
+    }
+    .card {
+      background: rgba(34,34,34,0.85);
+      backdrop-filter: blur(6px);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.5);
+      padding: 2rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 500px;
+      max-width: 500px;
+    }
+    .card h3 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    pre {
+      background: #1e1e1e;
+      color: #eee;
+      padding: 1rem;
+      border-radius: 6px;
+      overflow-x: auto;
+      flex: 1;
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px 24px;
+      background: var(--button-background);
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .3s;
+    }
+    button:hover { background: var(--button-hover-background); }
+    @media (max-width: 900px) {
+      .results-wrapper {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body class="dark-mode">
+  <div id="status-block">
+    <!-- statut affiché ici -->
+  </div>
+
+  <div class="results-wrapper">
+    <div class="card">
+      <h3>📤 Requête envoyée</h3>
+      <pre id="request-block">Chargement...</pre>
+    </div>
+    <div class="card">
+      <h3>📥 Réponse reçue</h3>
+      <pre id="response-block">Chargement...</pre>
+    </div>
+  </div>
+
+  <div style="text-align:center">
+    <button onclick="window.location.href='index.html'">↩️ Nouveau test</button>
+  </div>
+
+  <script>
+    function getQueryParams() {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has("data")) {
+        try { return JSON.parse(decodeURIComponent(urlParams.get("data"))); }
+        catch { return {}; }
+      }
+      const params = {};
+      for (const [k, v] of urlParams.entries()) params[k] = v;
+      return params;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const data = getQueryParams();
+      const requestSent = data.requestSent || {};
+      const response    = data.response || data;
+
+      const statusBlock = document.getElementById("status-block");
+      const requestBlock = document.getElementById("request-block");
+      const responseBlock = document.getElementById("response-block");
+
+      const success = response.EXECCODE === "0000";
+
+      statusBlock.innerHTML = `
+        <h2 class="${success ? "success" : "failure"}">
+          ${success ? "✅ Paiement accepté" : "❌ Paiement échoué"}
+        </h2>
+      `;
+
+      requestBlock.textContent = JSON.stringify(requestSent, null, 2);
+      responseBlock.textContent = JSON.stringify(response, null, 2);
+    });
+  </script>
+</body>
+</html>

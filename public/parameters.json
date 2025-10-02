@@ -1,0 +1,1586 @@
+{
+  "3DSECURE": {
+    "type": "no, yes",
+    "example": "true"
+  },
+  "3DSECUREACSTRANSACTIONID": {
+    "type": "uuid(36)",
+    "example": "4dc406b0-038d-43ef-a96c-c85352c5e2c0"
+  },
+  "3DSECUREAUTHENTICATIONAMOUNT": {
+    "type": "integer",
+    "example": "1000"
+  },
+  "3DSECUREAUTHENTICATIONDATE": {
+    "type": "datetime(yyyy-MM-dd HH:mm:ss)",
+    "example": "2020-12-01 11:00:01"
+  },
+  "3DSECURECARDENROLLED": {
+    "type": "u, n, y",
+    "example": "y"
+  },
+  "3DSECURECAVV": {
+    "type": "hexadecimal string(max 45)",
+    "example": "8c47ab90f2b9c3219208115b182f520360000000"
+  },
+  "3DSECURECAVVALGORITHM": {
+    "type": "alphanumeric (1)",
+    "example": "3"
+  },
+  "3DSECURECHALLENGECANCELATION": {
+    "type": "string(2)",
+    "example": "01"
+  },
+  "3DSECURECHALLENGEWINDOWSIZE": {
+    "type": "01, 02, 03, 04, 05",
+    "example": "04"
+  },
+  "3DSECUREDISPLAYMODE": {
+    "type": "main,popup,top,raw",
+    "example": "main"
+  },
+  "3DSECUREDSTRANSACTIONID": {
+    "type": "uuid(36)",
+    "example": "4dc406b0-038d-43ef-a96c-c85352c5e2c0"
+  },
+  "3DSECUREECI": {
+    "type": "string (2)",
+    "example": "05"
+  },
+  "3DSECUREEXEMPTIONREASON": {
+    "type": "low_value, transaction_risk_analysis, secure_corporate_payments",
+    "example": "low_value"
+  },
+  "3DSECUREMODE": {
+    "type": "sca, frictionless",
+    "example": "sca"
+  },
+  "3DSECUREOUTOFSCOPEREASON": {
+    "type": "mit, moto, one_leg_out, anonymous_prepaid_card",
+    "example": "mit"
+  },
+  "3DSECUREPREFERENCE": {
+    "type": "sca, frictionless, nopref, scamandate",
+    "example": "sca"
+  },
+  "3DSECURERESULT": {
+    "type": "u, a, n, y, Blank (space)",
+    "example": "Y"
+  },
+  "3DSECURESCORE": {
+    "type": "string(2)",
+    "example": "25"
+  },
+  "3DSECURESDKAPPID": {
+    "type": "uuid(36)",
+    "example": "4dc406b0-038d-43ef-a96c-c85352c5e2c0"
+  },
+  "3DSECURESDKENCRYPTEDDATA": {
+    "type": "string(1-64000)",
+    "example": ""
+  },
+  "3DSECURESDKEPHEMPUBLICKEY": {
+    "type": "string(1-256)",
+    "example": ""
+  },
+  "3DSECURESDKMAXTIMEOUT": {
+    "type": "integer(1-2)",
+    "example": "5"
+  },
+  "3DSECURESDKREFERENCENUMBER": {
+    "type": "string(1-32)",
+    "example": ""
+  },
+  "3DSECURESDKTRANSACTIONID": {
+    "type": "uuid(36)",
+    "example": "4dc406b0-038d-43ef-a96c-c85352c5e2c0"
+  },
+  "3DSECURESTATUS": {
+    "type": "U, N, A, Y, R, I",
+    "example": "y"
+  },
+  "3DSECURETRANSACTIONSTATUSREASON": {
+    "type": "string(2)",
+    "example": "01"
+  },
+  "3DSECUREVERSION": {
+    "type": "1, 2",
+    "example": "2"
+  },
+  "3DSECUREXID": {
+    "type": "string(max 40)",
+    "example": "00000000000000000501"
+  },
+  "ACCOUNTCHANGEDATE": {
+    "type": "date(YYYY-MM-DD)",
+    "example": "2018-01-10"
+  },
+  "ACCOUNTCREATIONDATE": {
+    "type": "date(YYYY-MM-DD)",
+    "example": "2018-01-10"
+  },
+  "ACCOUNT_KEY": {
+    "type": "string (16)",
+    "example": "Y#iK*h-fZ>E<:7Ai"
+  },
+  "AGEVERIFICATION": {
+    "type": "boolean",
+    "example": "true"
+  },
+  "ALIAS": {
+    "type": "string(1-40)",
+    "example": "A1-fc5bafe3-8c12-4314-95c7-2e15ec3220e0"
+  },
+  "ALIASMODE": {
+    "type": "oneclick, subscription",
+    "example": "oneclick"
+  },
+  "AMOUNT": {
+    "type": "integer",
+    "example": "1000"
+  },
+  "AMOUNTS": {
+    "type": "hash",
+    "example": "{#<Date: 2016-01-01 ((2457389j,0s,0n),+0s,2299161j)>=>50000, #<Date: 2016-02-01 ((2457420j,0s,0n),+0s,2299161j)>=>20000, #<Date: 2016-03-01 ((2457449j,0s,0n),+0s,2299161j)>=>10000}"
+  },
+  "APIKEY": {
+    "type": "string (16)",
+    "example": "a1b2c3d4e5f6g7h8"
+  },
+  "APIKEYID": {
+    "type": "string (36)",
+    "example": "a688b3a1-d227-4cdd-9454-5d7cfcc74ef9"
+  },
+  "ASKIBAN": {
+    "type": "boolean",
+    "example": "true"
+  },
+  "AUTHORIZATIONTYPE": {
+    "type": "preauthorization, finalauthorization",
+    "example": "finalauthorization"
+  },
+  "AVSCODE": {
+    "type": "string(1)",
+    "example": "A"
+  },
+  "AVSMESSAGE": {
+    "type": "string(1, 255)",
+    "example": "A"
+  },
+  "AVSPOSTALCODE": {
+    "type": "string(1-9)",
+    "example": "10007"
+  },
+  "AVSSTREETNAME": {
+    "type": "string(4-50)",
+    "example": "Champs élysées"
+  },
+  "AVSSTREETNUMBER": {
+    "type": "integer",
+    "example": "42"
+  },
+  "BANK": {
+    "type": "string(8-11)",
+    "example": "ABNANL2A"
+  },
+  "BILLINGADDRESS": {
+    "type": "string(1-50)",
+    "example": "285 Fulton Street"
+  },
+  "BILLINGCITY": {
+    "type": "string(1-255)",
+    "example": "New York"
+  },
+  "BILLINGCOUNTRY": {
+    "type": "string(2)",
+    "example": "US"
+  },
+  "BILLINGFIRSTNAME": {
+    "type": "string(1-15)",
+    "example": "John"
+  },
+  "BILLINGLASTNAME": {
+    "type": "string(1-15)",
+    "example": "Doe"
+  },
+  "BILLINGMOBILEPHONE": {
+    "type": "string(1-32)",
+    "example": "+33666666666"
+  },
+  "BILLINGPHONE": {
+    "type": "string(1-32)",
+    "example": "+33111111111"
+  },
+  "BILLINGPOSTALCODE": {
+    "type": "string(1-9)",
+    "example": "10007"
+  },
+  "BILLINGSTATE": {
+    "type": "string(max 3)",
+    "example": "IDF"
+  },
+  "BILLINGTITLE": {
+    "type": "mr, miss, mrs",
+    "example": "mr"
+  },
+  "CALLBACKURL": {
+    "type": "string(1-32)",
+    "example": "http://mydomain.com/webservices/callbacks"
+  },
+  "CARDCODE": {
+    "type": "string(12-19)",
+    "example": "XXXXXXXXXXXX4444"
+  },
+  "CARDCOUNTRY": {
+    "type": "string(2)",
+    "example": "US"
+  },
+  "CARDCVV": {
+    "type": "string(3-4)",
+    "example": "123"
+  },
+  "CARDENROLLDATE": {
+    "type": "date(YYYY-MM-DD)",
+    "example": "2018-01-01"
+  },
+  "CARDFULLNAME": {
+    "type": "string(1-255)",
+    "example": "JOHN SNOW"
+  },
+  "CARDNETWORK": {
+    "type": "VISA, AMERICAN EXPRESS, MASTERCARD, CB, UNKNOWN",
+    "example": "VISA"
+  },
+  "CARDTYPE": {
+    "type": "string",
+    "example": "VISA"
+  },
+  "CARDVALIDITYDATE": {
+    "type": "date(MM-YY)",
+    "example": "12-17"
+  },
+  "CART[X][BRAND]": {
+    "type": "string(1-100)",
+    "example": "Micropple"
+  },
+  "CART[X][CATEGORY]": {
+    "type": "computersandsoftware, electronics, appliances, homeandgarden, fashion, healthandbeauty, jewellery, sport, leisureandhobbies, carsandmotorbikes, furniture, kidsandbaby, videogamesandconsoles, toysandgames, pets, foodanddrink, giftandflowers, entertainment, travel, auctionsandgroupbuying, servicesforindividuals, servicesforprofessionals",
+    "example": "electronics"
+  },
+  "CART[X][DELIVERYEXPECTEDDATE]": {
+    "type": "date(YYYY-MM-DD)",
+    "example": "2017-06-20"
+  },
+  "CART[X][DELIVERYEXPECTEDDELAY]": {
+    "type": "int (1-3)",
+    "example": "2"
+  },
+  "CART[X][DELIVERYLABEL]": {
+    "type": "string(1-100)",
+    "example": "Micropple store"
+  },
+  "CART[X][DELIVERYSPEED]": {
+    "type": "standard,express",
+    "example": "express"
+  },
+  "CART[X][DELIVERYTYPE]": {
+    "type": "storepickup, networkpickup, travelpickup, billingaddress, carrier, edelivery, other",
+    "example": "storepickup"
+  },
+  "CART[X][DISCOUNT]": {
+    "type": "float",
+    "example": "10.5"
+  },
+  "CART[X][FEES]": {
+    "type": "integer",
+    "example": "2000"
+  },
+  "CART[X][MERCHANTITEMID]": {
+    "type": "string",
+    "example": "REF-123456"
+  },
+  "CART[X][NAME]": {
+    "type": "string",
+    "example": "Laser printer"
+  },
+  "CART[X][PRICE]": {
+    "type": "int",
+    "example": "20000"
+  },
+  "CART[X][QUANTITY]": {
+    "type": "integer",
+    "example": "3"
+  },
+  "CART[X][SUBMERCHANTEXTERNALID]": {
+    "type": "string(1-64)",
+    "example": "shop1.com"
+  },
+  "CART[X][TAX]": {
+    "type": "float",
+    "example": "19.5"
+  },
+  "CART[X][TOTALAMOUNT]": {
+    "type": "integer",
+    "example": "60000"
+  },
+  "CLIENTACCEPTHEADER": {
+    "type": "string(max 2048)",
+    "example": "application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5"
+  },
+  "CLIENTADDRESS": {
+    "type": "string(1-510)",
+    "example": "285 Fulton Street."
+  },
+  "CLIENTAUTHMETHOD": {
+    "type": "guest, credentials, federated, issuer, thirdparty, fido",
+    "example": "credentials"
+  },
+  "CLIENTBENEFICIARYID": {
+    "type": "int (11) or email",
+    "example": "john.snow@example.com"
+  },
+  "CLIENTDOB": {
+    "type": "date(YYYY-MM-DD)",
+    "example": "1982-06-20"
+  },
+  "CLIENTEMAIL": {
+    "type": "email(5-255)",
+    "example": "john.snow@example.com"
+  },
+  "CLIENTGENDER": {
+    "type": "m, f",
+    "example": "f"
+  },
+  "CLIENTIDENT": {
+    "type": "string(1-255)",
+    "example": "john.snow"
+  },
+  "CLIENTIP": {
+    "type": "ipv4",
+    "example": "10.1.1.1"
+  },
+  "CLIENTJAVAENABLED": {
+    "type": "yes, no",
+    "example": "`no`"
+  },
+  "CLIENTREFERRER": {
+    "type": "string(1-255)",
+    "example": "https://your_shop.com/order?id=1234"
+  },
+  "CLIENTSCREENCOLORDEPTH": {
+    "type": "int(1-2)",
+    "example": "32"
+  },
+  "CLIENTSCREENHEIGHT": {
+    "type": "int(1-6)",
+    "example": "1280"
+  },
+  "CLIENTSCREENWIDTH": {
+    "type": "int(1-6)",
+    "example": "1024"
+  },
+  "CLIENTUSERAGENT": {
+    "type": "string(1-255)",
+    "example": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:47.0) Gecko/20100101 Firefox/47.0"
+  },
+  "COLUMNS": {
+    "type": "string(",
+    "example": "IDENTIFIER;DATE;TRANSACTIONID;ORDERID;OPERATIONTYPE;AMOUNT;CURRENCY;BILLINGFEES INCL. VAT;EXECCODE;CLIENTEMAIL;CLIENTADDRESS;CARDFULLNAME;CARDTYPE;CARDCOUNTRY;3DSECURE;3DSGLOBALSTATUS;RULE APPLIED;SCHEDULE;RETRY"
+  },
+  "COMPRESSION": {
+    "type": "zip,gzip,bzip",
+    "example": "zip"
+  },
+  "CREATEALIAS": {
+    "type": "boolean",
+    "example": "true"
+  },
+  "DATE": {
+    "type": "date(YYYY-MM)",
+    "example": "2016-12"
+  },
+  "DELIVERYEMAIL": {
+    "type": "email(5-255)",
+    "example": "john.snow@example.com"
+  },
+  "DELIVERYTIMEFRAME": {
+    "type": "electronic,sameday,overnight,longer,",
+    "example": "sameday"
+  },
+  "DESCRIPTION": {
+    "type": "string(1-510)",
+    "example": "Knows nothing"
+  },
+  "DESCRIPTOR": {
+    "type": "string",
+    "example": "myshop.com"
+  },
+  "DISPLAYCHARGEDTRANSACTION": {
+    "type": "yes, no",
+    "example": "no"
+  },
+  "DISPLAYCREATEALIAS": {
+    "type": "boolean",
+    "example": "true"
+  },
+  "ENDDATE": {
+    "type": "date(YYYY-MM-DD)",
+    "example": "2017-01-31"
+  },
+  "EXTERNALENTITYID": {
+    "type": "int (1-10)",
+    "example": "Example:"
+  },
+  "EXTERNALREFERENCE": {
+    "type": "int (9)",
+    "example": "19"
+  },
+  "EXTRADATA": {
+    "type": "string(1-255)",
+    "example": "referrer=myshop.com;order=premium"
+  },
+  "FEES": {
+    "type": "integer",
+    "example": "2000"
+  },
+  "FILEHASH": {
+    "type": "string(64)",
+    "example": "62efb12401dcbdfc61fea9de67e77c44f4e0d0ec78208f37ac0830b16ee9e41d"
+  },
+  "GIFTCARDAMOUNT": {
+    "type": "integer",
+    "example": "100"
+  },
+  "GIFTCARDCOUNT": {
+    "type": "int(1-2)",
+    "example": "2"
+  },
+  "GIFTCARDCURRENCY": {
+    "type": "string(3)",
+    "example": "EUR"
+  },
+  "HASH": {
+    "type": "string(64)",
+    "example": "15477dcb8687adf90fa51e418f3c1a2d025f40b177a978c2734514734633b3c4"
+  },
+  "HFTOKEN": {
+    "type": "string(1-36)",
+    "example": "17730892-b3f7-4411-bc81-557471ffcede"
+  },
+  "HIDECARDFULLNAME": {
+    "type": "no, yes",
+    "example": "true"
+  },
+  "HIDECLIENTEMAIL": {
+    "type": "no, yes",
+    "example": "true"
+  },
+  "HOMEPHONE": {
+    "type": "string(max 32)",
+    "example": "+33133333333"
+  },
+  "IBAN": {
+    "type": "string(1-34)",
+    "example": "DE11888888889999999999"
+  },
+  "IDENTIFICATIONDOCID": {
+    "type": "string(1-32)",
+    "example": "42798"
+  },
+  "IDENTIFICATIONDOCTYPE": {
+    "type": "taxstatement",
+    "example": "taxstatement"
+  },
+  "IDENTIFIER": {
+    "type": "string(1-32)",
+    "example": "YOUR_IDENTIFIER"
+  },
+  "INITIALSCHEMETRANSACTIONID": {
+    "type": "string(1-55)",
+    "example": "11034331402111290210"
+  },
+  "ITEMAVAILABILITY": {
+    "type": "yes, no",
+    "example": "true"
+  },
+  "LABELMESSAGE": {
+    "type": "string(1-65)",
+    "example": "Some message..."
+  },
+  "LANGUAGE": {
+    "type": "fr, en, de, es, it, nl, zh, ru, pt, cs",
+    "example": "en"
+  },
+  "LAST12MONTHSTRANSACTIONCOUNT": {
+    "type": "int(1-3)",
+    "example": "4"
+  },
+  "LAST24HOURSADDCARDATTEMPTS": {
+    "type": "int(1-3)",
+    "example": "2"
+  },
+  "LAST24HOURSTRANSACTIONCOUNT": {
+    "type": "int(1-3)",
+    "example": "4"
+  },
+  "LAST6MONTHSPURCHASECOUNT": {
+    "type": "int(1-4)",
+    "example": "4"
+  },
+  "MAILTO": {
+    "type": "email",
+    "example": "john.doe@email.com"
+  },
+  "MERCHANTITEMID": {
+    "type": "string",
+    "example": "REF-123456"
+  },
+  "METADATA": {
+    "type": "string(1-255)",
+    "example": "@METADATA-MYWEBSITE"
+  },
+  "MOBILEPHONE": {
+    "type": "string(max 32)",
+    "example": "+33633333333"
+  },
+  "NETWORKTOKENCODE": {
+    "type": "string(11-19)",
+    "example": "1111222233334444"
+  },
+  "NETWORKTOKENECI": {
+    "type": "string(2)",
+    "example": "06"
+  },
+  "NETWORKTOKENTAVV": {
+    "type": "base64(28)",
+    "example": "AAEBAwQjS1AAXXXXXXXJYe09bQA="
+  },
+  "NETWORKTOKENTRID": {
+    "type": "string(11)",
+    "example": "11222444555"
+  },
+  "OPERATIONTYPE": {
+    "type": "authorization, payment, capture, refund, credit, void",
+    "example": "payment"
+  },
+  "ORDERID": {
+    "type": "string(1-40)",
+    "example": "1234"
+  },
+  "PASSWORDCHANGEDATE": {
+    "type": "date(YYYY-MM-DD)",
+    "example": "2018-01-10"
+  },
+  "PAYEE[ADDRESS]": {
+    "type": "string(1-50)",
+    "example": "14 Waverly Street"
+  },
+  "PAYEE[BIC]": {
+    "type": "string(1-11)",
+    "example": "ABNANL2A"
+  },
+  "PAYEE[CARDCODE]": {
+    "type": "string(12-19)",
+    "example": "1111222233334444"
+  },
+  "PAYEE[CITY]": {
+    "type": "string(1-255)",
+    "example": "Montreal"
+  },
+  "PAYEE[COUNTRY]": {
+    "type": "string(2)",
+    "example": "CA"
+  },
+  "PAYEE[DOB]": {
+    "type": "date(YYYY-MM-DD)",
+    "example": "1990-01-01"
+  },
+  "PAYEE[FIRSTNAME]": {
+    "type": "string(1-35)",
+    "example": "John"
+  },
+  "PAYEE[IBAN]": {
+    "type": "string(14-34)",
+    "example": "DE11888888889999999999"
+  },
+  "PAYEE[IDCOUNTRYCODE]": {
+    "type": "string(1-3)",
+    "example": "250"
+  },
+  "PAYEE[IDNUMBER]": {
+    "type": "string(1-35)",
+    "example": "1234567890"
+  },
+  "PAYEE[IDTYPE]": {
+    "type": "01 02 03 04\n05 06 07 08\n09 10 12 13\n14 15 16 11",
+    "example": "01"
+  },
+  "PAYEE[LASTNAME]": {
+    "type": "string(1-35)",
+    "example": "Doe"
+  },
+  "PAYEE[NATIONALITY]": {
+    "type": "string(3)",
+    "example": "FRA"
+  },
+  "PAYEE[PHONENUMBER]": {
+    "type": "string(1-20)",
+    "example": "+33601010101"
+  },
+  "PAYEE[STATE]": {
+    "type": "string(1-255)",
+    "example": "Quebec"
+  },
+  "PAYEE[ZIPCODE]": {
+    "type": "string(1-10)",
+    "example": "H1H"
+  },
+  "PAYER[IDCOUNTRYCODE]": {
+    "type": "string(1-3)",
+    "example": "250"
+  },
+  "PAYER[IDNUMBER]": {
+    "type": "string(1-35)",
+    "example": "1234567890"
+  },
+  "PAYER[IDTYPE]": {
+    "type": "01 02 03 04\n05 06 07 08\n09 10 12 13\n14 15 16 11",
+    "example": "01"
+  },
+  "PAYER[NATIONALITY]": {
+    "type": "string(3)",
+    "example": "FRA"
+  },
+  "PAYMENTOPTION": {
+    "type": "facilypay-3x, facilypay-3xsansfrais, facilypay-4x, facilypay-4xsansfrais, cofidis-3xcb, cofidis-4xcb, cofidis-4xpaypal, cofidis-1euro",
+    "example": "facilypay-3x"
+  },
+  "PREORDERDATE": {
+    "type": "date(YYYY-MM-DD)",
+    "example": "2018-02-01"
+  },
+  "PRESCORINGCODE": {
+    "type": "string(20 max)",
+    "example": "PS2110531"
+  },
+  "RECURRINGEXPIRY": {
+    "type": "date(YYYY-MM-DD)",
+    "example": "2020-01-04"
+  },
+  "RECURRINGFREQUENCY": {
+    "type": "int(1-4))",
+    "example": "10"
+  },
+  "RECURRINGSEQUENCE": {
+    "type": "int(1-2)",
+    "example": "1"
+  },
+  "REDIRECTURLCANCEL": {
+    "type": "string(1-2048)",
+    "example": "http://mydomain.com/cancel"
+  },
+  "REDIRECTURLSUCCESS": {
+    "type": "string(1-2048)",
+    "example": "http://mydomain.com/purchase-confirmation"
+  },
+  "REORDERINGITEM": {
+    "type": "yes, no",
+    "example": "false"
+  },
+  "SCHEDULEID": {
+    "type": "string(2-32)",
+    "example": "A123456"
+  },
+  "SCOPE": {
+    "type": "CLIENTSGROUP,CLIENT, ACCOUNT",
+    "example": "CLIENTSGROUP"
+  },
+  "SELECTEDBRAND": {
+    "type": "cb, visa, vpay, electron, mastercard, maestro",
+    "example": "CB"
+  },
+  "SHIPTOADDRESS": {
+    "type": "string(1-50)",
+    "example": "55 rue de la liberté"
+  },
+  "SHIPTOADDRESSDATE": {
+    "type": "date(YYYY-MM-DD)",
+    "example": "2018-04-02"
+  },
+  "SHIPTOADDRESSTYPE": {
+    "type": "billing, verified, new, storepickup, edelivery, travelpickup, other",
+    "example": "verified"
+  },
+  "SHIPTOCITY": {
+    "type": "string(1-255)",
+    "example": "New York"
+  },
+  "SHIPTOCOMPANYNAME": {
+    "type": "string(1-50)",
+    "example": "MyShop.com"
+  },
+  "SHIPTOCOUNTRY": {
+    "type": "string(2)",
+    "example": "US"
+  },
+  "SHIPTOFIRSTNAME": {
+    "type": "string(1-15)",
+    "example": "John"
+  },
+  "SHIPTOLASTNAME": {
+    "type": "string(1-30)",
+    "example": "Doe"
+  },
+  "SHIPTOMOBILEPHONE": {
+    "type": "string(1-32)",
+    "example": "+33666666666"
+  },
+  "SHIPTOPHONE": {
+    "type": "string(1-32)",
+    "example": "+33111111111"
+  },
+  "SHIPTOPOSTALCODE": {
+    "type": "string(1-9)",
+    "example": "10007"
+  },
+  "SHIPTOSTATE": {
+    "type": "string(max 3)",
+    "example": "IDF"
+  },
+  "SHIPTOTITLE": {
+    "type": "mr, miss, mrs",
+    "example": "mr"
+  },
+  "STARTDATE": {
+    "type": "date(YYYY-MM-DD)",
+    "example": "2016-12-01"
+  },
+  "SUBMERCHANTEXTERNALID": {
+    "type": "string(1-64)",
+    "example": "shop1.com"
+  },
+  "SUBSCRIBERACCOUNT": {
+    "type": "string(1-34)",
+    "example": "DE11888888889999999999"
+  },
+  "SUBSCRIBERDOB": {
+    "type": "date(YYYY-MM-DD)",
+    "example": "1982-06-20"
+  },
+  "SUBSCRIBERNAME": {
+    "type": "string(1-255)",
+    "example": "John Doe"
+  },
+  "SUBSCRIBERZIPCODE": {
+    "type": "string(1-9)",
+    "example": "75008"
+  },
+  "SUSPICIOUSACCOUNTACTIVITY": {
+    "type": "yes, no",
+    "example": "`no`"
+  },
+  "TERMINALID": {
+    "type": "integer",
+    "example": "1"
+  },
+  "TIMEZONE": {
+    "type": "string(1-128)",
+    "example": "Europe/Paris"
+  },
+  "TRANSACTIONEXPIRATIONDATE": {
+    "type": "datetime(yyyy-MM-dd HH:mm:ss)",
+    "example": "Example:"
+  },
+  "TRANSACTIONID": {
+    "type": "string(1-32)",
+    "example": "A1123456"
+  },
+  "TRANSFERREASON": {
+    "type": "Me to Me, Pe to Pe, Prepaid Top up, Cash out",
+    "example": "Pe to Pe"
+  },
+  "TRAVELAGENCYCODE": {
+    "type": "string(1-8)",
+    "example": "12345678"
+  },
+  "TRAVELAGENCYNAME": {
+    "type": "string(1-25)",
+    "example": "Travel Agency"
+  },
+  "TRAVELDEPARTUREDATE": {
+    "type": "YYYY-MM-DD",
+    "example": "2020-12-01"
+  },
+  "TRAVELLEGS[X][DEPARTUREDATE]": {
+    "type": "date(YYYY-MM-DD)",
+    "example": "2018-12-01"
+  },
+  "TRAVELLEGS[X][DESTINATIONLOCATIONCODE]": {
+    "type": "string(64)",
+    "example": "JFK"
+  },
+  "TRAVELLEGS[X][EXCHANGEABLE]": {
+    "type": "boolean",
+    "example": "yes"
+  },
+  "TRAVELLEGS[X][INSURANCE]": {
+    "type": "boolean",
+    "example": "yes"
+  },
+  "TRAVELLEGS[X][MEANTRANSPORT]": {
+    "type": "plane, train, road, boat",
+    "example": "plane"
+  },
+  "TRAVELLEGS[X][ORIGINLOCATIONCODE]": {
+    "type": "string(64)",
+    "example": "CDG"
+  },
+  "TRAVELLEGS[X][PASSENGERCOUNT]": {
+    "type": "int(1-3)",
+    "example": "4"
+  },
+  "TRAVELLEGS[X][RANK]": {
+    "type": "int(1-2)",
+    "example": "3"
+  },
+  "TRAVELLEGS[X][SERVICECLASS]": {
+    "type": "First class, Second class, Business, Economic, 0",
+    "example": "First class"
+  },
+  "TRAVELLEGS[X][TRAVELCARRIERCODE]": {
+    "type": "string(2)",
+    "example": "AA"
+  },
+  "TRAVELLEGS[X][TRAVELCARRIERNUMBER]": {
+    "type": "string(1-5)",
+    "example": "81"
+  },
+  "TRAVELLEGS[X][TRAVELDESTINATIONLOCATIONCODE]": {
+    "type": "string(3)",
+    "example": "JFK"
+  },
+  "TRAVELLEGS[X][TRAVELFAREBASISCODE]": {
+    "type": "string(1-6)",
+    "example": "VLVA2FI"
+  },
+  "TRAVELLEGS[X][TRAVELORIGINLOCATIONCODE]": {
+    "type": "string(3)",
+    "example": "CDG"
+  },
+  "TRAVELLEGS[X][TRAVELSERVICECLASS]": {
+    "type": "string(1-2)",
+    "example": "V"
+  },
+  "TRAVELLEGS[X][TRAVELSTOPOVERCODE]": {
+    "type": "string(1)",
+    "example": "N"
+  },
+  "TRAVELPASSENGERDOB": {
+    "type": "date(YYYY-MM-DD)",
+    "example": "1976-07-06"
+  },
+  "TRAVELPASSENGERFIRSTNAME": {
+    "type": "string(1-50)",
+    "example": "John"
+  },
+  "TRAVELPASSENGERLASTNAME": {
+    "type": "string(1-50)",
+    "example": "Doe"
+  },
+  "TRAVELPASSENGERNAME": {
+    "type": "string(1-20)",
+    "example": "JC Denton"
+  },
+  "TRAVELSTAYS[X][ARRIVALDATE]": {
+    "type": "date(YYYY-MM-DD)",
+    "example": "2018-12-01"
+  },
+  "TRAVELSTAYS[X][DEPARTUREDATE]": {
+    "type": "date(YYYY-MM-DD)",
+    "example": "2018-12-01"
+  },
+  "TRAVELSTAYS[X][INSURANCE]": {
+    "type": "boolean",
+    "example": "yes"
+  },
+  "TRAVELSTAYS[X][LOCATION]": {
+    "type": "string(1-50)",
+    "example": "Hotel Central of New York"
+  },
+  "TRAVELSTAYS[X][PASSENGERCOUNT]": {
+    "type": "int(1-3)",
+    "example": "4"
+  },
+  "TRAVELSTAYS[X][ROOMCOUNT]": {
+    "type": "string(1-3)",
+    "example": "2"
+  },
+  "TRAVELSTAYS[X][TYPE]": {
+    "type": "hotel, rental, tour/trip, other",
+    "example": "hotel"
+  },
+  "TRAVELSTAYS[X][VEHICLERENT]": {
+    "type": "boolean",
+    "example": "yes"
+  },
+  "TRAVELTICKETNUMBER": {
+    "type": "string",
+    "example": "1059127084903"
+  },
+  "USETEMPLATE": {
+    "type": "web, mobile",
+    "example": "web"
+  },
+  "VERSION": {
+    "type": "3.0",
+    "example": "3.0"
+  },
+  "WORKPHONE": {
+    "type": "string(max 32)",
+    "example": "+33633333333"
+  },
+  "XPAYECI": {
+    "type": "string (2)",
+    "example": "05"
+  },
+  "XPAYSOLUTION": {
+    "type": "apple, samsung, android",
+    "example": "apple"
+  },
+  "XPAYTOKEN": {
+    "type": "string (no limit)",
+    "example": "ANm+396YW5O2AASyysq9AoABFA=="
+  },
+  "XPAYTYPE": {
+    "type": "browser, in_app",
+    "example": "browser"
+  },
+  "3DSECUREAUTHENTICATIONSTATUS": {
+    "type": "y, n, u, a, c, r, i, empty",
+    "example": "y"
+  },
+  "3DSECUREFEE": {
+    "type": "string (1-64)",
+    "example": "Example:"
+  },
+  "3DSECURESIGNATURESTATUS": {
+    "type": "y, n",
+    "example": "y"
+  },
+  "3DSECURE_XID": {
+    "type": "hexadecimal (40 max)",
+    "example": "Example:"
+  },
+  "3DSGLOBALSTATUS": {
+    "type": "ok, not_enrolled, unavailable, not_required, rejected",
+    "example": "ok"
+  },
+  "BATCHID": {
+    "type": "string(1-32)",
+    "example": "A1234"
+  },
+  "CARD3DSECUREENROLLED": {
+    "type": "y, n, u",
+    "example": "y"
+  },
+  "CARDUSAGE": {
+    "type": "enterprise, debit, credit, prepaid",
+    "example": "Debit"
+  },
+  "CHARGEBACKCODE": {
+    "type": "string",
+    "example": "13.1, 37, 45, 10, 4, etc"
+  },
+  "CHARGEBACKDATE": {
+    "type": "date(YYYY-MM-DD)",
+    "example": "2017-05-25"
+  },
+  "CHARGEBACKSTATUS": {
+    "type": "first chargeback, representment, first chargeback cancellation, second chargeback, second chargeback cancellation, retrieval request, pre-compliance issuer, pre-compliance acquirer, compliance, pre-arbitration, arbitration",
+    "example": "chargeback"
+  },
+  "CHARGEBACKTYPE": {
+    "type": "chargeback, representment",
+    "example": "chargeback"
+  },
+  "CHARGEBACKVALIDITY": {
+    "type": "date(YYYY-MM-DD)",
+    "example": "2017-05-25"
+  },
+  "CURRENCY": {
+    "type": "string(3)",
+    "example": "EUR"
+  },
+  "CVVRESPONSECODE": {
+    "type": "M, N, P, S, U, X, Y, Z",
+    "example": "M"
+  },
+  "EXECCODE": {
+    "type": "string(4)",
+    "example": "0000"
+  },
+  "MESSAGE": {
+    "type": "string(no length limit)",
+    "example": "The transaction has been accepted"
+  },
+  "PP_ADDRESS_STATUS": {
+    "type": "none, confirmed, unconfirmed",
+    "example": "`confirmed`"
+  },
+  "PP_PAYER_ID": {
+    "type": "string(13)",
+    "example": "A12345BCD6789"
+  },
+  "PP_PAYER_STATUS": {
+    "type": "none, canceled-reversal, completed, denied, expired, failed, in-progress, partially-refunded, pending, refunded, reversed, processed, voided, completed-funds-held",
+    "example": "completed"
+  },
+  "PP_PROTECTION_ELIGIBILITY": {
+    "type": "eligible, partiallyeligible, ineligible",
+    "example": "eligible"
+  },
+  "PP_PROTECTION_ELIGIBILITY_TYPE": {
+    "type": "itemnotreceivedeligible, unauthorizedpaymenteligible, ineligible",
+    "example": "itemnotreceivedeligible"
+  },
+  "PP_SHIP_TO_CITY": {
+    "type": "string(40 Bytes)",
+    "example": "New York City"
+  },
+  "PP_SHIP_TO_COUNTRYCODE": {
+    "type": "string(2)",
+    "example": "NY"
+  },
+  "PP_SHIP_TO_NAME": {
+    "type": "string(1-32)",
+    "example": "John Doe"
+  },
+  "PP_SHIP_TO_STREET": {
+    "type": "string(1-100)",
+    "example": "Fulton St"
+  },
+  "PP_SHIP_TO_ZIP": {
+    "type": "string(1-20)",
+    "example": "10007"
+  },
+  "PP_TRANSACTION_ID": {
+    "type": "string(20 max)",
+    "example": "a1B2c3D4e5F6g7H8"
+  },
+  "REDIRECTHTML": {
+    "type": "string(no length limit)",
+    "example": "Example:"
+  },
+  "REDIRECTPOSTPARAMS": {
+    "type": "string(no length limit)",
+    "example": "p1=v1&p2=v2"
+  },
+  "REDIRECTURL": {
+    "type": "string(no length limit)",
+    "example": "http://some_url?p1=v1"
+  },
+  "REPORT": {
+    "type": "string(1-50)",
+    "example": "csv_file.csv"
+  },
+  "REPORTHASH": {
+    "type": "string(64)",
+    "example": "62efb12401dcbdfc61fea9de67e77c44f4e0d0ec78208f37ac0830b16ee9e41d."
+  },
+  "REQUESTID": {
+    "type": "string(1-32)",
+    "example": "W1234"
+  },
+  "SCHEMETRANSACTIONID": {
+    "type": "string(1-55)",
+    "example": "11034331402111290210"
+  },
+  "SHORTNAME": {
+    "type": "string (1-64)",
+    "example": "store1"
+  },
+  "STAN": {
+    "type": "int(6)",
+    "example": "123456"
+  },
+  "SUBMERCHANT COUNTRY": {
+    "type": "string",
+    "example": "FR"
+  },
+  "SUBMERCHANT DOING BUSINESS AS": {
+    "type": "string",
+    "example": "Example Startup"
+  },
+  "SUBMERCHANT MCC": {
+    "type": "string",
+    "example": "5945"
+  },
+  "SUBMERCHANT NAME": {
+    "type": "string",
+    "example": "Example Startup Inc."
+  },
+  "SUBMERCHANT ONLINE CHANNEL": {
+    "type": "boolean",
+    "example": "true"
+  },
+  "SUBMERCHANT POS CHANNEL": {
+    "type": "boolean",
+    "example": "false"
+  },
+  "SUBMERCHANT STATUS": {
+    "type": "string",
+    "example": "ENABLED"
+  },
+  "SUBMERCHANT WEBSITE": {
+    "type": "string",
+    "example": "https://www.test.com"
+  },
+  "TAGS": {
+    "type": "string(no max length)",
+    "example": "POTENTIAL FRAUD=Volume&TO BE CHECKED=Custom 1"
+  },
+  "3DSECI": {
+    "type": "string (1)",
+    "example": "5"
+  },
+  "3DSLIABILITYSHIFT": {
+    "type": "‘yes’, ‘no’",
+    "example": "Example:"
+  },
+  "ADDITIONAL DATA": {
+    "type": "string",
+    "example": "Example:"
+  },
+  "AMOUNT IN BILLING CURRENCY": {
+    "type": "integer",
+    "example": "Example:"
+  },
+  "ARN": {
+    "type": "string",
+    "example": "Example:"
+  },
+  "AUTHENTICATION": {
+    "type": "string",
+    "example": "3DSECURE"
+  },
+  "AUTHORIZATION NUMBER": {
+    "type": "string",
+    "example": "Example:"
+  },
+  "AUTHORIZEDBY": {
+    "type": "string",
+    "example": "Example:"
+  },
+  "AVS CODE": {
+    "type": "string(1)",
+    "example": "A"
+  },
+  "AVS MESSAGE": {
+    "type": "string(1, 255)",
+    "example": "A"
+  },
+  "BANK COLLECTION NUMBER": {
+    "type": "string(1-50)",
+    "example": "Example:"
+  },
+  "BILLING ADDRESS": {
+    "type": "string(1-50)",
+    "example": "Example:"
+  },
+  "BILLING CITY": {
+    "type": "string(1-25)",
+    "example": "New York"
+  },
+  "BILLING COUNTRY": {
+    "type": "string(2)",
+    "example": "USA"
+  },
+  "BILLING CURRENCY": {
+    "type": "string(3)",
+    "example": "EUR"
+  },
+  "BILLING FIRST NAME": {
+    "type": "string(1-15)",
+    "example": "John"
+  },
+  "BILLING LAST NAME": {
+    "type": "string(1-15)",
+    "example": "Doe"
+  },
+  "BILLING MOBILE PHONE": {
+    "type": "string(1-32)",
+    "example": "33111111111"
+  },
+  "BILLING NETWORK": {
+    "type": "string(1-10)",
+    "example": "Example:"
+  },
+  "BILLING PHONE": {
+    "type": "string(1-32)",
+    "example": "33111111111"
+  },
+  "BILLING POSTAL CODE": {
+    "type": "string(1-9)",
+    "example": "Example:"
+  },
+  "BILLING TITLE": {
+    "type": "mr, miss, mrs",
+    "example": "mr"
+  },
+  "BILLING VAT FEES": {
+    "type": "integer",
+    "example": "Example:"
+  },
+  "BILLINGFEES EX. VAT": {
+    "type": "integer",
+    "example": "Example:"
+  },
+  "BILLINGFEES EXCHANGE RATE": {
+    "type": "integer",
+    "example": "Example:"
+  },
+  "BILLINGFEES INCL. VAT": {
+    "type": "integer",
+    "example": "Example:"
+  },
+  "BRAND": {
+    "type": "string",
+    "example": "Example:"
+  },
+  "CAPTUREBY": {
+    "type": "string",
+    "example": "Example:"
+  },
+  "CARD PRODUCT": {
+    "type": "consumer,corporate",
+    "example": "Example:"
+  },
+  "CARD SERVICE TYPE": {
+    "type": "debit,credit,prepaid,universal",
+    "example": "Example:"
+  },
+  "CARD SUBTYPE": {
+    "type": "string",
+    "example": "Example:"
+  },
+  "CARDBANK": {
+    "type": "string",
+    "example": "BNPPARIBAS"
+  },
+  "CARDCODE 6X4": {
+    "type": "string(12-19)",
+    "example": "111122XXXXXX4444"
+  },
+  "CB2A": {
+    "type": "int(2)",
+    "example": "Example:"
+  },
+  "CHARGEBACK CODE": {
+    "type": "string(1-255)",
+    "example": "Example:"
+  },
+  "CHARGEBACK REASON": {
+    "type": "string(1-255)",
+    "example": "Example:"
+  },
+  "CHARGEBACKAMOUNT": {
+    "type": "integer",
+    "example": "1000"
+  },
+  "CHARGED_DATE": {
+    "type": "date(YYY-MM-DD)",
+    "example": "2017-05-25"
+  },
+  "CHARGED_REFERENCE": {
+    "type": "string(0-45)",
+    "example": "20170926.150.18168221583972500"
+  },
+  "CLIENT_IDENTIFIER": {
+    "type": "string",
+    "example": "Payplug IDENTIFIER"
+  },
+  "CLIENT_INTERNAL_ID": {
+    "type": "string(1-125)",
+    "example": "Example:"
+  },
+  "CLIENT_USER_AGENT": {
+    "type": "string(1-255)",
+    "example": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:47.0) Gecko/20100101 Firefox/47.0"
+  },
+  "COLLECTION DATE": {
+    "type": "datetime(yyyy-MM-dd HH:mm:ss)",
+    "example": "2017-05-01"
+  },
+  "COLLECTION NUMBER": {
+    "type": "integer",
+    "example": "Example:"
+  },
+  "CSF": {
+    "type": "float",
+    "example": "Example:"
+  },
+  "EPT RANK": {
+    "type": "int(3)",
+    "example": "Example:"
+  },
+  "FINANCIALSTATE": {
+    "type": "being processed,collected,paid, charged",
+    "example": "`paid`"
+  },
+  "FORM ATTEMPT": {
+    "type": "1,2,3,4",
+    "example": "some of stuff"
+  },
+  "INTERCHANGE FEE": {
+    "type": "integer",
+    "example": "Example:"
+  },
+  "IP COUNTRY": {
+    "type": "ipv4",
+    "example": "120.1.1.1"
+  },
+  "ITP": {
+    "type": "string(12)",
+    "example": "552904001002"
+  },
+  "LAST NOTIFICATION CONTENT": {
+    "type": "string(1-45)",
+    "example": "OK"
+  },
+  "LAST NOTIFICATION HTTP CODE": {
+    "type": "sent,succeeded,pending,failure",
+    "example": "`sent`"
+  },
+  "LAST NOTIFICATION RESULT": {
+    "type": "sent,succeeded,pending,failure",
+    "example": "`sent`"
+  },
+  "LOCATION": {
+    "type": "string(1-35)",
+    "example": "Example:"
+  },
+  "MERCHANT COUNTRY": {
+    "type": "string(2)",
+    "example": "FR"
+  },
+  "MID": {
+    "type": "integer",
+    "example": "Example:"
+  },
+  "MODEL": {
+    "type": "int(3)",
+    "example": "Example:"
+  },
+  "NATURE": {
+    "type": "arbitration, chargeback, chargeback reversal, pre-arbitration, rdr, rdr reversal, retrieval request, representment, representment reversal",
+    "example": "`chargeback`"
+  },
+  "NFC": {
+    "type": "y,n",
+    "example": "y"
+  },
+  "OPPOTOTA_ENTRY_DATE": {
+    "type": "datetime(yyyy-MM-dd HH:mm:ss)",
+    "example": "2017-05-01"
+  },
+  "OPPOTOTA_REASON": {
+    "type": "lost,stolen,did not reach cardholder,counterfeit,misuse",
+    "example": "Example:"
+  },
+  "PAYMENT METHOD TYPE": {
+    "type": "CARDS, INTERNATIONAL_CARDS, AMEX, PAYPAL, KLARNA_INVOICE, PAYSAFECARD, TITRE_RESTAURANT, PRZELEWY, SDD, MULTIBANCO, FACILYPAY, APPLEPAY, COFIDIS, CASINO",
+    "example": "PAYPAL"
+  },
+  "PAYMENT OPTION": {
+    "type": "facilypay-3x, facilypay-3xsansfrais, facilypay-4x, facilypay-4xsansfrais",
+    "example": "facilypay-3x"
+  },
+  "POS TERMINAL TYPE": {
+    "type": "ept,mpos, kiosk",
+    "example": "`ept`"
+  },
+  "PP_ADDRESS STATUS": {
+    "type": "none, confirmed, unconfirmed",
+    "example": "`confirmed`"
+  },
+  "PP_PAYER ID STATUS": {
+    "type": "string(13)",
+    "example": "A12345BCD6789"
+  },
+  "PP_PAYER STATUS": {
+    "type": "none, canceled-reversal, completed, denied, expired, failed, in-progress, partially-refunded, pending, refunded, reversed, processed, voided, completed-funds-held",
+    "example": "completed"
+  },
+  "PP_PROTECTION ELIGIBILITY": {
+    "type": "eligible, partiallyeligible, ineligible",
+    "example": "eligible"
+  },
+  "PP_PROTECTION ELIGIBILITY TYPE": {
+    "type": "itemnotreceivedeligible, unauthorizedpaymenteligible, ineligible",
+    "example": "itemnotreceivedeligible"
+  },
+  "PP_SHIP TO CITY": {
+    "type": "string(40 Bytes)",
+    "example": "New York City"
+  },
+  "PP_SHIP TO COUNTRY CODE": {
+    "type": "string(2)",
+    "example": "NY"
+  },
+  "PP_SHIP TO NAME": {
+    "type": "string(1-32)",
+    "example": "John Doe"
+  },
+  "PP_SHIP TO STREET": {
+    "type": "string(1-100)",
+    "example": "Fulton St"
+  },
+  "PP_SHIP TO ZIP CODE": {
+    "type": "string(1-20)",
+    "example": "10007"
+  },
+  "PP_TRANSACTION ID": {
+    "type": "string(20 max)",
+    "example": "a1B2c3D4e5F6g7H8"
+  },
+  "REASON": {
+    "type": "string(1-125)",
+    "example": "Example:"
+  },
+  "REF ARCH": {
+    "type": "string(1-12)",
+    "example": "Example:"
+  },
+  "REFUND TRANSFER REFERENCE": {
+    "type": "string(1-32)",
+    "example": "A1123456"
+  },
+  "REFUND TRANSFER STATUS": {
+    "type": "pending,failed,succeeded",
+    "example": "`pending`"
+  },
+  "REFUNDED": {
+    "type": "string",
+    "example": "A1234"
+  },
+  "REFUNDEDBY": {
+    "type": "string(0-n)",
+    "example": "Example:"
+  },
+  "REFUNDTYPE": {
+    "type": "refund,cancel",
+    "example": "`refund`"
+  },
+  "RETRY": {
+    "type": "string(no length limit)",
+    "example": "1-4 | 1-3 | 2-3"
+  },
+  "RULE APPLIED": {
+    "type": "string(1-125)",
+    "example": "Example:"
+  },
+  "RULE IDS": {
+    "type": "string(1-255)",
+    "example": "Example:"
+  },
+  "SALE REFERENCE IDENTIFICATION": {
+    "type": "string(1-12)",
+    "example": "CO25953200"
+  },
+  "SALE REFERENCE NUMBER": {
+    "type": "string(1-12)",
+    "example": "DZ20855100"
+  },
+  "SCHEDULE": {
+    "type": "string(no length limit)",
+    "example": "1-4 | 1-3 | 2-3"
+  },
+  "SERIAL NUMBER": {
+    "type": "string(12)",
+    "example": "Example:"
+  },
+  "SHIP TO ADDRESS": {
+    "type": "string(1-50)",
+    "example": "55 rue de la liberté"
+  },
+  "SHIP TO CITY": {
+    "type": "string(1-255)",
+    "example": "New York"
+  },
+  "SHIP TO COMPANY NAME": {
+    "type": "string(1-50)",
+    "example": "MyShop.com"
+  },
+  "SHIP TO COUNTRY": {
+    "type": "string(2)",
+    "example": "US"
+  },
+  "SHIP TO FIRST NAME": {
+    "type": "string(1-15)",
+    "example": "John"
+  },
+  "SHIP TO LAST NAME": {
+    "type": "string(1-30)",
+    "example": "Doe"
+  },
+  "SHIP TO MOBILE PHONE": {
+    "type": "string(1-32)",
+    "example": "33111111111"
+  },
+  "SHIP TO PHONE": {
+    "type": "string(1-32)",
+    "example": "33111111111"
+  },
+  "SHIP TO POSTAL CODE": {
+    "type": "string(1-9)",
+    "example": "10007"
+  },
+  "SHIP TO TITLE": {
+    "type": "mr, miss, mrs",
+    "example": "mr"
+  },
+  "SIRET": {
+    "type": "string",
+    "example": "012345678912345"
+  },
+  "SUBMERCHANTS EXTERNAL IDS": {
+    "type": "string(32)",
+    "example": "Example:"
+  },
+  "TERMINAL ID": {
+    "type": "ans8",
+    "example": "04884583"
+  },
+  "TRADE NAME": {
+    "type": "",
+    "example": "Example:"
+  },
+  "TRANSACTION EXPIRATION DATE": {
+    "type": "datetime(yyyy-MM-dd HH:mm:ss)",
+    "example": "Example:"
+  },
+  "TRANSACTION ORIGIN": {
+    "type": "DIRECTLINK, FORM, EXTRANET, BATCH, REDIRECTION, POS, DIRECT_SUBMIT, VAD_INTERNAL, PRT_RECEIVER, MULTIBANCO_MEPS, HOSTED_FIELD, POS_INTERNATIONAL",
+    "example": "POS"
+  },
+  "TRANSFER REFERENCE": {
+    "type": "string(1-45)",
+    "example": "Example:"
+  },
+  "UDV": {
+    "type": "string(10)",
+    "example": "Example:"
+  },
+  "VOIDED": {
+    "type": "string(1-40)",
+    "example": "A1234"
+  },
+  "VOIDEDBY": {
+    "type": "string(1-40)",
+    "example": "A1234"
+  },
+  "VOIDTYPE": {
+    "type": "authorization,capture,payment,refund,credit",
+    "example": "capture"
+  }
+}

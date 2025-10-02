@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Paiement Dalenys</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background: radial-gradient(circle at top, #0f2027, #203a43, #2c5364);
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Segoe UI", Roboto, sans-serif;
+      padding: 2rem;
+    }
+    .card {
+      background: rgba(34,34,34,0.85);
+      backdrop-filter: blur(6px);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.5);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 480px;
+      min-width: 480px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 1.8rem;
+      margin-bottom: 1.8rem;
+      color: #f1f1f1;
+    }
+    .form-group { margin-bottom: 1.2rem; }
+    label {
+      display:block;
+      font-weight:600;
+      margin-bottom:0.4rem;
+      color: #ddd;
+    }
+    input[type="text"], input[type="email"] {
+      width:95%;
+      padding:0.7rem 0.8rem;
+      border:1px solid var(--input-border-color);
+      border-radius:6px;
+      background: var(--input-background);
+      color: var(--text-color);
+      font-size:1rem;
+    }
+    input[type="submit"] {
+      background: var(--button-background);
+      color:#fff;
+      border:none;
+      border-radius:6px;
+      width:100%;
+      padding:0.9rem;
+      font-size:1.1rem;
+      font-weight:600;
+      cursor:pointer;
+      transition:background .3s;
+      margin-top:0.5rem;
+    }
+    input[type="submit"]:hover { background: var(--button-hover-background); }
+    .form-note {
+      margin-top: 1rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body class="dark-mode">
+    <header id="main-header">
+      <div id="top-left-corner">
+      <a href="index.html" class="back-home-btn">← Home page</a>
+      </div>
+      </header>
+  <div id="payment-wrapper">
+    <!-- ======= Bloc Use-cases ======= -->
+    <div id="use-cases-panel" class="panel"></div>
+
+    <!-- ======= Bloc Paiement ======= -->
+    <div class="card">
+      <h1>Paiement sécurisé</h1>
+
+      <form id="paymentForm">
+        <input type="hidden" name="method" value="payment" />
+        <input type="hidden" name="params[VERSION]" value="3.0" />
+        <input type="hidden" name="params[DESCRIPTION]" value="Cart content" />
+        <input type="hidden" name="params[ORDERID]" value="" />
+        <input type="hidden" name="params[CLIENTUSERAGENT]" value="Mozilla/5.0" />
+        <input type="hidden" name="params[CLIENTIP]" value="192.168.1.1" />
+        <input type="hidden" name="params[HASH]" value="" />
+        <input type="hidden" name="params[3DSECUREDISPLAYMODE]" value="raw"/>
+        <input type="hidden" name="params[REDIRECTURLSUCCESS]" id="redirect-success" />
+        <input type="hidden" name="params[REDIRECTURLCANCEL]"  id="redirect-cancel" />
+        <input type="hidden" id="identifier" name="params[IDENTIFIER]" value="" />
+
+        <!-- 🔑 Environnement choisi -->
+        <input type="hidden" name="environment" id="selected-environment" />
+
+        <div class="form-group">
+          <label for="operationType">Operation Type</label>
+          <input type="text" id="operationType" name="params[OPERATIONTYPE]" value="authorization" />
+        </div>
+
+        <div class="form-group">
+          <label for="amount">Amount</label>
+          <input type="text" id="amount" name="params[AMOUNT]" value="12345" />
+        </div>
+
+        <div class="form-group">
+          <label for="clientEmail">Client Email</label>
+          <input type="email" id="clientEmail" name="params[CLIENTEMAIL]" value="john.snow@example.com" />
+        </div>
+
+        <div class="form-group">
+          <label for="clientIdent">Client Identifier</label>
+          <input type="text" id="clientIdent" name="params[CLIENTIDENT]" value="john.snow.12" />
+        </div>
+
+        <div class="form-group">
+          <label for="hfToken">HFTOKEN</label>
+          <input type="text" id="hfToken" name="params[HFTOKEN]" value="" />
+        </div>
+
+        <input type="submit" value="Payer" />
+        <div class="form-note">Le hash est calculé côté serveur, sécurisé 🔒</div>
+      </form>
+    </div>
+  </div>
+
+  <script src="use-case-selection.js"></script>
+  <script src="env-manager.js"></script>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const base = window.location.origin;
+    document.getElementById("redirect-success").value = `${base}/success.html`;
+    document.getElementById("redirect-cancel").value  = `${base}/success.html`;
+
+    // Récupère un éventuel hfToken dans l'URL
+    const params = new URLSearchParams(window.location.search);
+    const hfToken = params.get("hfToken");
+    if (hfToken) document.getElementById("hfToken").value = hfToken;
+
+    // Génère un ORDERID unique
+    document.querySelector('input[name="params[ORDERID]"]').value = "RND" + Date.now();
+
+    // 🔑 Environnement choisi
+    const lastEnv = localStorage.getItem("lastEnv");
+    if (lastEnv) {
+      document.getElementById("selected-environment").value = lastEnv;
+      fetch(`/api/env/${encodeURIComponent(lastEnv)}`)
+        .then(r => r.json())
+        .then(data => {
+          if (data.identifier) {
+            document.getElementById("identifier").value = data.identifier;
+          }
+        })
+        .catch(err => console.error("Erreur récupération identifier:", err));
+    }
+
+    // ⚡ intercept submit
+    const form = document.getElementById("paymentForm");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const body = {};
+      formData.forEach((value, key) => body[key.replace(/^params\[(.+)\]$/, "$1")] = value);
+      body.environment = formData.get("environment");
+
+      try {
+        const resp = await fetch("/processPayment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+        const data = await resp.json();
+        console.log("Réponse paiement:", data);
+
+        // 3️⃣ Gestion des cas
+        if (data.REDIRECTHTML) {
+          // 🟢 Cas 3DS : HTML encodé en base64
+          const decoded = atob(data.REDIRECTHTML);
+          document.open();
+          document.write(decoded);
+          document.close();
+        }
+        else if (data.REDIRECTURL) {
+          // 🟢 Cas 3DS : URL + POST params
+          const form3ds = document.createElement("form");
+          form3ds.method = "POST";
+          form3ds.action = data.REDIRECTURL;
+
+          const params3ds = new URLSearchParams(data.REDIRECTPOSTPARAMS);
+          params3ds.forEach((v, k) => {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = k;
+            input.value = v;
+            form3ds.appendChild(input);
+          });
+
+          document.body.appendChild(form3ds);
+          form3ds.submit();
+        } 
+        else {
+          if (data.EXECCODE && data.EXECCODE !== "0000") {
+            alert("❌ Erreur paiement: " + (data.MESSAGE || "Réponse inconnue"));
+          }
+          // ✅ Redirection vers success.html avec les données (succès ou échec)
+          const dataEncoded = encodeURIComponent(JSON.stringify(data));
+          window.location.href = `/success.html?data=${dataEncoded}`;
+        }
+      } catch (err) {
+        console.error("Erreur fetch paiement:", err);
+        alert("❌ Erreur côté client: " + err.message);
+        const errorData = encodeURIComponent(JSON.stringify({ error: err.message }));
+        window.location.href = `/success.html?data=${errorData}`;
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
