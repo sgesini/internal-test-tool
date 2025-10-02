@@ -157,6 +157,76 @@ app.post("/processPayment", async (req, res) => {
 });
 
 // ===============================
+// 💳 HostedForms POST function
+// ===============================
+app.post("/processHostedForm", (req, res) => {
+  try {
+    const { environment, params } = req.body;
+    if (!environment) {
+      return res.status(400).json({ error: "Missing environment" });
+    }
+
+    const envs = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
+    const env  = envs[environment];
+    if (!env || !env.secretKey) {
+      return res.status(400).json({ error: "Invalid environment or secretKey" });
+    }
+
+    // Nettoie les champs
+    const cleanParams = {};
+    for (const [k, v] of Object.entries(params)) {
+      if (v !== null && v !== undefined && v !== "") {
+        cleanParams[k] = v;
+      }
+    }
+
+    // ✅ Génère un reqId unique
+    const reqId = genReqId();
+
+    // ✅ Patch des redirect URLs AVANT le calcul du hash
+    const baseUrl = `http://localhost:${PORT}`;
+    cleanParams.REDIRECTURLSUCCESS = `${baseUrl}/success.html?reqId=${reqId}`;
+    cleanParams.REDIRECTURLCANCEL  = `${baseUrl}/success.html?reqId=${reqId}`;
+
+    // ✅ Calcule le HASH
+    const paramsForHash = { ...cleanParams };
+    delete paramsForHash.HASH;
+    delete paramsForHash.environment;
+
+    const hash = computeHash(paramsForHash, env.secretKey);
+    cleanParams.HASH = hash;
+
+    // ✅ Stockage côté serveur (avec TTL)
+    savePaymentRequest(reqId, { requestSent: cleanParams, environment });
+
+    console.log("=== HostedForm request stored ===");
+    console.log("reqId =", reqId);
+    console.log(cleanParams);
+
+    // 📝 Construit un formulaire auto‐soumis vers Dalenys
+    const formHtml = `
+      <html><body onload="document.forms[0].submit()">
+        <form method="POST" action="https://secure-test.dalenys.com/front/form/process">
+          ${Object.entries(cleanParams).map(([k,v]) => 
+            `<input type="hidden" name="${k}" value="${v}"/>`).join("\n")}
+        </form>
+      </body></html>
+    `;
+
+    res.send(formHtml);
+
+  } catch (err) {
+    console.error("❌ Erreur HostedForm:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
+
+
+
+// ===============================
 // 🌐 API : Récupérer la requête envoyée (via reqId)
 // ===============================
 app.get("/api/payment-request/:id", (req, res) => {

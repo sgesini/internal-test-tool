@@ -44,10 +44,10 @@
       <button id="delete-env" class="danger">Supprimer</button>
     </div>
 
-    <!-- ✅ FORMULAIRE directement avec class="panel" -->
+    <!-- ✅ FORMULAIRE HostedForms via serveur -->
     <form id="hosted-forms" class="panel"
           method="post"
-          action="https://secure-test.dalenys.com/front/form/process">
+          action="/processHostedForm">
       <h3>Paiement Hosted Forms</h3>
 
       <label>Operation Type</label>
@@ -72,6 +72,7 @@
       <input type="hidden" name="HASH"      id="hash-field" />
       <input type="hidden" name="REDIRECTURLSUCCESS" id="redirect-success" />
       <input type="hidden" name="REDIRECTURLCANCEL"  id="redirect-cancel" />
+      <input type="hidden" name="environment" id="env-hidden" />
 
       <input type="submit" value="Pay" />
     </form>
@@ -91,73 +92,78 @@
   <script src="test-cards.js"></script>
 
   <script>
-    // URLs de redirection
+  // ✅ Injection dynamique des URLs de redirection
   document.addEventListener("DOMContentLoaded", () => {
     const base = window.location.origin;
     document.getElementById("redirect-success").value = `${base}/success.html`;
     document.getElementById("redirect-cancel").value  = `${base}/success.html`;
   });
-  
-    document.addEventListener("DOMContentLoaded", () => {
-      const orderField = document.getElementById("orderid-field");
-      const idField    = document.getElementById("identifier-field");
-      const hashField  = document.getElementById("hash-field");
-      const form       = document.getElementById("hosted-forms");
 
-      orderField.value = "RND" + Date.now();
+  document.addEventListener("DOMContentLoaded", () => {
+    const orderField = document.getElementById("orderid-field");
+    const idField    = document.getElementById("identifier-field");
+    const form       = document.getElementById("hosted-forms");
 
-      const lastEnv = localStorage.getItem("lastEnv");
-      if (lastEnv) {
-        fetch(`/api/env/${encodeURIComponent(lastEnv)}`)
-          .then(r => r.json())
-          .then(env => { if (env.identifier) idField.value = env.identifier; });
+    // Génère ORDERID unique
+    orderField.value = "RND" + Date.now();
+
+    // Injecte IDENTIFIER depuis env choisi
+    const lastEnv = localStorage.getItem("lastEnv");
+    if (lastEnv) {
+      document.getElementById("env-hidden").value = lastEnv;
+      fetch(`/api/env/${encodeURIComponent(lastEnv)}`)
+        .then(r => r.json())
+        .then(env => { if (env.identifier) idField.value = env.identifier; });
+    }
+
+    // Interception du submit pour passer par notre backend
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const environment = localStorage.getItem("lastEnv");
+      if (!environment) {
+        alert("Please choose an environment before paying.");
+        return;
       }
 
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const environment = localStorage.getItem("lastEnv");
-        if (!environment) {
-          alert("Please choose an environment before paying.");
-          return;
-        }
-        const fd = new FormData(form);
-        const params = {};
-        fd.forEach((v, k) => { params[k] = v; });
+      const fd = new FormData(form);
+      const params = {};
+      fd.forEach((v, k) => { params[k] = v; });
 
-        try {
-          const resp = await fetch("/computeHash", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ environment, params })
-          });
-          if (!resp.ok) throw new Error("Erreur lors du calcul du hash");
-          const data = await resp.json();
-          if (!data.hash) throw new Error("Réponse invalide du serveur");
+      try {
+        const resp = await fetch("/processHostedForm", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ environment, params })
+        });
 
-          hashField.value = data.hash;
-          form.submit();
-        } catch (err) {
-          console.error("❌ Hash error :", err);
-          alert("Impossible de calculer le hash : " + err.message);
-        }
-      });
+        if (!resp.ok) throw new Error("Erreur backend HostedForm");
+        const html = await resp.text();
+
+        // Injection pour forcer la redirection POST vers Dalenys
+        const win = window.open("", "_self");
+        win.document.write(html);
+        win.document.close();
+      } catch (err) {
+        console.error("❌ HostedForm error :", err);
+        alert("Impossible de lancer le paiement HostedForm : " + err.message);
+      }
     });
+  });
 
-        // ouverture/fermeture pop-in cartes test
-    document.addEventListener("DOMContentLoaded", () => {
-      const modal   = document.getElementById("test-cards-modal");
-      const openBtn = document.getElementById("open-test-cards");
-      const closeBtn= document.getElementById("close-test-cards");
-      openBtn.addEventListener("click", () => {
-        buildTestCardsTable();
-        modal.classList.remove("hidden");
-      });
-      closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
-      modal.addEventListener("click", e => {
-        if (e.target === modal) modal.classList.add("hidden");
-      });
+  // ouverture/fermeture pop-in cartes test
+  document.addEventListener("DOMContentLoaded", () => {
+    const modal   = document.getElementById("test-cards-modal");
+    const openBtn = document.getElementById("open-test-cards");
+    const closeBtn= document.getElementById("close-test-cards");
+    openBtn.addEventListener("click", () => {
+      buildTestCardsTable();
+      modal.classList.remove("hidden");
     });
-
+    closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
+    modal.addEventListener("click", e => {
+      if (e.target === modal) modal.classList.add("hidden");
+    });
+  });
   </script>
 </body>
 </html>
