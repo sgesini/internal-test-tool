@@ -51,7 +51,7 @@ function initializeHostedFields(style, isDarkMode) {
       brand: {
         id: "brand-container",
         version: 2,
-        isCbPreferredNetwork: false,
+        isCbPreferredNetwork: true,
         style
       },
       card: {

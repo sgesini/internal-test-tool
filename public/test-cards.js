@@ -51,8 +51,13 @@ function buildTestCardsTable() {
   container.querySelectorAll(".copy-btn").forEach(btn => {
     btn.addEventListener("click", e => {
       e.preventDefault();
+      const originalText = btn.textContent;
       navigator.clipboard.writeText(btn.dataset.pan).then(() => {
-        console.log("📋 Copied:", btn.dataset.pan);
+        btn.textContent = "✅ Copié !";
+        setTimeout(() => { btn.textContent = originalText; }, 1500);
+      }).catch(err => {
+        console.error("Erreur copie clipboard", err);
+        alert("Impossible de copier le PAN");
       });
     });
   });

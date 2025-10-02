@@ -16,10 +16,10 @@
     <span class="theme-label">Dark Mode</span>
   </div>
 
-<div id="top-left-corner">
-  <a href="index.html" class="back-home-btn">← Home page</a>
-  <button id="open-test-cards" class="primary">Click here to display test cards</button>
-</div>
+  <div id="top-left-corner">
+    <a href="index.html" class="back-home-btn">← Home page</a>
+    <button id="open-test-cards" class="primary">Click here to display test cards</button>
+  </div>
 
   <div id="payment-wrapper">
     <!-- PANEL Environnements -->
@@ -70,24 +70,34 @@
       <input type="hidden" name="ORDERID"   id="orderid-field" />
       <input type="hidden" name="VERSION"   value="3.0" />
       <input type="hidden" name="HASH"      id="hash-field" />
+      <input type="hidden" name="REDIRECTURLSUCCESS" id="redirect-success" />
+      <input type="hidden" name="REDIRECTURLCANCEL"  id="redirect-cancel" />
 
       <input type="submit" value="Pay" />
     </form>
   </div>
 
-  <!-- Pop-in cartes -->
+  <!-- ✅ Pop-in masquée -->
   <div id="test-cards-modal" class="test-modal hidden">
     <div class="test-modal-content">
       <span id="close-test-cards" class="close-btn">&times;</span>
-      <h3>Cartes sandbox de test</h3>
+      <h3>Sandbox test cards (click on the card PAN to copy)</h3>
       <div id="test-cards-container"></div>
     </div>
   </div>
 
   <script src="env-manager.js"></script>
   <script src="script.js"></script>
+  <script src="test-cards.js"></script>
 
   <script>
+    // URLs de redirection
+  document.addEventListener("DOMContentLoaded", () => {
+    const base = window.location.origin;
+    document.getElementById("redirect-success").value = `${base}/success.html`;
+    document.getElementById("redirect-cancel").value  = `${base}/success.html`;
+  });
+  
     document.addEventListener("DOMContentLoaded", () => {
       const orderField = document.getElementById("orderid-field");
       const idField    = document.getElementById("identifier-field");
@@ -133,7 +143,7 @@
       });
     });
 
-    // Pop-in cartes
+        // ouverture/fermeture pop-in cartes test
     document.addEventListener("DOMContentLoaded", () => {
       const modal   = document.getElementById("test-cards-modal");
       const openBtn = document.getElementById("open-test-cards");

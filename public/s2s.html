@@ -135,7 +135,6 @@
     document.getElementById("redirect-cancel").value  = `${base}/success.html`;
   });
 
-  // Gestion du formulaire S2S
   document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("orderid-field").value = "RND" + Date.now();
 
@@ -193,21 +192,25 @@
         const result = await resp2.json();
         console.log("Réponse S2S:", result);
 
+        const res = result.response || {};
+        const reqId = result.reqId;
+
         // 3️⃣ Gestion des cas
-        if (result.REDIRECTHTML) {
-          // 🟢 Cas 3DS avec HTML encodé en base64 → plein écran
-          const decoded = atob(result.REDIRECTHTML);
-          document.open();
-          document.write(decoded);
-          document.close();
+        if (res.REDIRECTHTML) {
+          // 3DS avec HTML encodé
+          const decoded = atob(res.REDIRECTHTML);
+          const doc = document.open("text/html", "replace");
+          doc.write(decoded);
+          doc.close();
+          return;
         }
-        else if (result.REDIRECTURL) {
-          // 🟢 Cas 3DS avec URL + POST params
+        if (res.REDIRECTURL) {
+          // 3DS URL + POST params (la success URL contient déjà reqId)
           const form3ds = document.createElement("form");
           form3ds.method = "POST";
-          form3ds.action = result.REDIRECTURL;
+          form3ds.action = res.REDIRECTURL;
 
-          const params3ds = new URLSearchParams(result.REDIRECTPOSTPARAMS);
+          const params3ds = new URLSearchParams(res.REDIRECTPOSTPARAMS);
           params3ds.forEach((v, k) => {
             const input = document.createElement("input");
             input.type = "hidden";
@@ -218,25 +221,25 @@
 
           document.body.appendChild(form3ds);
           form3ds.submit();
-        } 
-        else {
-          if (result.EXECCODE && result.EXECCODE !== "0000") {
-            alert("❌ Erreur: " + (result.MESSAGE || "Réponse inconnue"));
-          }
-          // ✅ Toujours redirection vers success.html avec détails
-          const dataEncoded = encodeURIComponent(JSON.stringify(result));
-          window.location.href = `/success.html?data=${dataEncoded}`;
+          return;
         }
+
+        // ✅ Pas 3DS → redirection vers success.html avec la réponse en query + reqId
+        const successUrl = new URL("success.html", window.location.origin);
+        successUrl.searchParams.set("reqId", reqId || "");
+        Object.entries(res).forEach(([k, v]) => {
+          if (v != null) successUrl.searchParams.set(k, v);
+        });
+        window.location.href = successUrl.toString();
+
       } catch (err) {
         console.error("Erreur S2S:", err);
         alert("Impossible de traiter le paiement: " + err.message);
-        const errorData = encodeURIComponent(JSON.stringify({ error: err.message }));
-        window.location.href = `/success.html?data=${errorData}`;
       }
     });
   });
 
-  // Cartes de test
+  // Cartes de test (inchangé)
   document.addEventListener("DOMContentLoaded", () => {
     const modal   = document.getElementById("test-cards-modal");
     const openBtn = document.getElementById("open-test-cards");

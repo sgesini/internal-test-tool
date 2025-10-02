@@ -9,6 +9,30 @@ const http       = require("http");
 const app  = express();
 const PORT = 3000;
 const dataPath = path.join(__dirname, "config.json");
+// === In-memory store (TTL) pour les requêtes envoyées ===
+const paymentStore = new Map(); // reqId -> { payload: {...}, ts: number }
+const PAYMENT_TTL_MS = 15 * 60 * 1000; // 15 min
+
+function savePaymentRequest(reqId, payload) {
+  paymentStore.set(reqId, { payload, ts: Date.now() });
+  setTimeout(() => paymentStore.delete(reqId), PAYMENT_TTL_MS);
+}
+
+function appendQuery(urlStr, paramsObj) {
+  try {
+    const u = new URL(urlStr);
+    Object.entries(paramsObj || {}).forEach(([k, v]) => {
+      if (v !== undefined && v !== null) u.searchParams.set(k, String(v));
+    });
+    return u.toString();
+  } catch {
+    return urlStr; // si URL relative, on ne casse rien
+  }
+}
+
+function genReqId() {
+  return (crypto.randomUUID ? crypto.randomUUID() : crypto.randomBytes(16).toString("hex"));
+}
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -47,8 +71,6 @@ app.post("/computeHash", (req, res) => {
 // ===============================
 // 💳 S2S Payment POST function
 // ===============================
-let lastPayment = null; // 🆕 stockage en mémoire du dernier paiement
-
 app.post("/processPayment", async (req, res) => {
   try {
     const { environment, ...rawParams } = req.body;
@@ -71,12 +93,25 @@ app.post("/processPayment", async (req, res) => {
       return res.status(400).json({ error: "Invalid environment or secretKey" });
     }
 
+    // 🆕 reqId pour corréler la requête / redirection
+    const reqId = genReqId();
+
+    // 🆕 On injecte reqId dans les URLs de redirection (avant le hash)
+    if (cleanParams.REDIRECTURLSUCCESS) {
+      cleanParams.REDIRECTURLSUCCESS = appendQuery(cleanParams.REDIRECTURLSUCCESS, { reqId });
+    }
+    if (cleanParams.REDIRECTURLCANCEL) {
+      cleanParams.REDIRECTURLCANCEL  = appendQuery(cleanParams.REDIRECTURLCANCEL,  { reqId });
+    }
+
     // Removes HASH from the calculation if present
     const paramsForHash = { ...cleanParams };
     delete paramsForHash.HASH;
     const hash = computeHash(paramsForHash, env.secretKey);
-
     cleanParams.HASH = hash;
+
+    // 🆕 Sauvegarde la requête EXACTEMENT telle qu'envoyée
+    savePaymentRequest(reqId, { requestSent: { ...cleanParams }, environment });
 
     // POST Body builder
     const forwardBody = new URLSearchParams();
@@ -104,30 +139,32 @@ app.post("/processPayment", async (req, res) => {
     console.log("=== Réponse Dalenys ===");
     console.log(text);
 
-    // 🟢 return both request and response
     let parsedResponse;
-    try {
-      parsedResponse = JSON.parse(text);
-    } catch {
-      parsedResponse = { raw: text };
-    }
+    try { parsedResponse = JSON.parse(text); }
+    catch { parsedResponse = { raw: text }; }
 
-    const result = {
-      requestSent: cleanParams,   // ce que tu as envoyé
-      response: parsedResponse,   // la réponse brute
-      ...parsedResponse           // rétrocompatibilité (EXECCODE, MESSAGE…)
-    };
-
-    // 🆕 on sauvegarde côté serveur
-    lastPayment = result;
-
-    res.json(result);
+    // 🟢 On renvoie reqId + requestSent + response
+    res.json({
+      reqId,
+      requestSent: { ...cleanParams },
+      response: parsedResponse
+    });
 
   } catch (err) {
     console.error("❌ Erreur S2S Payment:", err);
     res.status(500).json({ error: err.message });
   }
 });
+
+// ===============================
+// 🌐 API : Récupérer la requête envoyée (via reqId)
+// ===============================
+app.get("/api/payment-request/:id", (req, res) => {
+  const item = paymentStore.get(req.params.id);
+  if (!item) return res.status(404).json({ error: "not found" });
+  res.json(item.payload); // { requestSent: {...}, environment }
+});
+
 
 // ===============================
 // 🌐 Endpoint pour récupérer le dernier paiement

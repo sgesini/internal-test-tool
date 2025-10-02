@@ -96,45 +96,50 @@
   </div>
 
   <script>
-    // Récupère la réponse dans l’URL (query params)
-    function getResponseFromUrl() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const result = {};
-      for (const [k, v] of urlParams.entries()) {
-        result[k] = v;
-      }
-      return result;
+  function getQueryParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const obj = {};
+    for (const [k, v] of urlParams.entries()) obj[k] = v;
+    return obj;
+  }
+
+  async function fetchRequestById(reqId) {
+    try {
+      const r = await fetch(`/api/payment-request/${encodeURIComponent(reqId)}`);
+      if (!r.ok) return {};
+      return await r.json(); // { requestSent: {...}, environment }
+    } catch {
+      return {};
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    const qp = getQueryParams();
+    const { reqId, ...response } = qp;
+
+    let requestSent = {};
+    if (reqId) {
+      const stored = await fetchRequestById(reqId);
+      requestSent = stored.requestSent || {};
     }
 
-    document.addEventListener("DOMContentLoaded", async () => {
-      let requestSent = {};
-      try {
-        const resp = await fetch("/lastPayment");
-        if (resp.ok) {
-          const data = await resp.json();
-          requestSent = data.requestSent || {};
-        }
-      } catch (err) {
-        console.error("Impossible de récupérer la requête:", err);
-      }
+    const statusBlock   = document.getElementById("status-block");
+    const requestBlock  = document.getElementById("request-block");
+    const responseBlock = document.getElementById("response-block");
 
-      const response = getResponseFromUrl();
+    const success = response.EXECCODE === "0000";
+    statusBlock.innerHTML = `
+      <h2 class="${success ? "success" : "failure"}">
+        ${success ? "✅ Paiement accepté" : "❌ Paiement échoué"}
+      </h2>
+    `;
 
-      const statusBlock   = document.getElementById("status-block");
-      const requestBlock  = document.getElementById("request-block");
-      const responseBlock = document.getElementById("response-block");
+    requestBlock.textContent  = JSON.stringify(requestSent, null, 2);
+    responseBlock.textContent = JSON.stringify(response, null, 2);
+  });
+</script>
 
-      const success = response.EXECCODE === "0000";
 
-      statusBlock.innerHTML = `
-        <h2 class="${success ? "success" : "failure"}">
-          ${success ? "✅ Paiement accepté" : "❌ Paiement échoué"}
-        </h2>
-      `;
 
-      requestBlock.textContent  = JSON.stringify(requestSent, null, 2);
-      responseBlock.textContent = JSON.stringify(response, null, 2);
-    });
-  </script>
 </body>
 </html>

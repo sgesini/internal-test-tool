@@ -84,14 +84,16 @@
     "3DSECUREEXEMPTIONREASON": "Yes",
     "3DSECUREVERSION": "Yes"
   },
-  "UC9 : DTA payment": {
+  "UC8 : DTA payment": {
+  },
+  "UC9 : Xpay single payment": {
     "AMOUNT": "Yes",
     "XPAYECI": "Yes",
     "XPAYSOLUTION": "Yes",
     "XPAYTOKEN": "Yes",
     "XPAYTYPE": "Yes"
   },
-  "UC10 : Xpay single payment": {
+  "UC10 : SCA one-click payment": {
     "ALIAS": "Yes",
     "ALIASMODE": "Yes",
     "3DSECUREPREFERENCE": "Yes",
@@ -111,7 +113,7 @@
     "SHIPTOADDRESSTYPE": "Yes",
     "DELIVERYTIMEFRAME": "Yes"
   },
-  "UC11 : SCA one-click payment": {
+  "UC11 : frictionless one-click payment": {
     "ALIAS": "Yes",
     "ALIASMODE": "Yes",
     "CARDCVV": "Yes",
@@ -131,7 +133,7 @@
     "SHIPTOADDRESSTYPE": "Yes",
     "DELIVERYTIMEFRAME": "Yes"
   },
-  "UC12 : frictionless one-click payment": {
+  "UC12 : one-click payment w/ external MPI": {
     "3DSECUREACSTRANSACTIONID": "Yes",
     "3DSECURECAVV": "Yes",
     "3DSECUREDSTRANSACTIONID": "Yes",
@@ -145,7 +147,7 @@
     "ALIASMODE": "Yes",
     "3DSECURECAVVALGORITHM": "Yes"
   },
-  " UC13 : one-click payment w/ external MPI": {
+  "UC13 : frictionless one-click payment w/ external MPI": {
     "3DSECUREACSTRANSACTIONID": "Yes",
     "3DSECURECAVV": "Yes",
     "3DSECUREDSTRANSACTIONID": "Yes",
@@ -160,11 +162,11 @@
     "3DSECURECAVVALGORITHM": "Yes",
     "3DSECUREEXEMPTIONREASON": "Yes"
   },
-  "UC14 : frictionless one-click payment w/ external MPI": {
+  "UC14 : DTA one-click payment": {
     "ALIAS": "Yes",
     "ALIASMODE": "Yes"
   },
-  "UC15 : DTA one-click payment": {
+  "UC15 : SCA one-click payment w/ external alias (NT)": {
     "MOBILEPHONE": "Yes",
     "3DSECUREPREFERENCE": "Yes",
     "BILLINGADDRESS": "Yes",
@@ -182,7 +184,7 @@
     "NETWORKTOKENTRID": "Yes",
     "NETWORKTOKENTAVV": "Yes"
   },
-  "UC16 : SCA one-click payment w/ external alias (NT)": {
+  "UC16 : frictionless one-click payment w/ external alias (NT)": {
     "MOBILEPHONE": "Yes",
     "3DSECUREPREFERENCE": "Yes",
     "BILLINGADDRESS": "Yes",
@@ -201,7 +203,7 @@
     "NETWORKTOKENTRID": "Yes",
     "NETWORKTOKENTAVV": "Yes"
   },
-  "UC17 : frictionless one-click payment w/ external alias (NT)": {
+  "UC17 : SCA one-click payment w/ external MPI &alias": {
     "3DSECUREACSTRANSACTIONID": "Yes",
     "3DSECURECAVV": "Yes",
     "3DSECUREDSTRANSACTIONID": "Yes",
@@ -217,7 +219,7 @@
     "NETWORKTOKENTRID": "Yes",
     "NETWORKTOKENTAVV": "Yes"
   },
-  "UC18 : SCA one-click payment w/ external MPI &alias": {
+  "UC18 : frictionless one-click payment w/ external MPI &alias": {
     "3DSECUREACSTRANSACTIONID": "Yes",
     "3DSECURECAVV": "Yes",
     "3DSECUREDSTRANSACTIONID": "Yes",
@@ -234,13 +236,13 @@
     "NETWORKTOKENTAVV": "Yes",
     "NETWORKTOKENECI": "Yes"
   },
-  "UC19 : frictionless one-click payment w/ external MPI &alias": {
+  "UC19 : DTA one-click payment w/ external alias": {
     "NETWORKTOKENCODE": "Yes",
     "NETWORKTOKENTRID": "Yes",
     "NETWORKTOKENTAVV": "Yes",
     "NETWORKTOKENECI": "Yes"
   },
-  "UC20 : DTA one-click payment w/ external alias": {
+  " UC20 : recurring payment first transaction": {
     "ALIASMODE": "Yes",
     "CREATEALIAS": "Yes",
     "RECURRINGSEQUENCE": "Yes",
@@ -256,12 +258,9 @@
     "SHIPTOPOSTALCODE": "Yes",
     "SHIPTOCOUNTRY": "Yes",
     "SHIPTOADDRESSTYPE": "Yes",
-    "DELIVERYTIMEFRAME": "Yes",
-    "Voici le retour du dev: j'ai regardé sur staging on ne renvoi pas de recurringsequence à 0 en interne (alias interne) mais on peut avoir le param en externe (ça a peut-être changé depuis RCT), on envoie 1 pour la première MIT en interne": "Yes",
-    "la première transaction cit le recurring sequence est à 1": "Yes",
-    "la première mit recurring sequence est >1": "Yes"
+    "DELIVERYTIMEFRAME": "Yes"
   },
-  " UC21 : recurring payment first transaction": {
+  "UC21 : recurring payment first transaction w/ external MPI": {
     "ALIASMODE": "Yes",
     "CREATEALIAS": "Yes",
     "RECURRINGSEQUENCE": "Yes",
@@ -275,12 +274,12 @@
     "3DSECUREMODE": "Yes",
     "3DSECURECAVVALGORITHM": "Yes"
   },
-  "UC22 : recurring payment first transaction w/ external MPI": {
+  "UC22 : DTA recurring payment first transaction": {
     "ALIASMODE": "Yes",
     "CREATEALIAS": "Yes",
     "RECURRINGSEQUENCE": "Yes"
   },
-  "UC23 (WIP) : DTA recurring payment first transaction": {
+  "UC23 (WIP) : Xpay recurring payment first transaction (WIP)": {
     "CREATEALIAS": "Yes",
     "ALIASMODE": "Yes",
     "RECURRINGSEQUENCE": "Yes",
@@ -289,7 +288,7 @@
     "XPAYECI": "Yes",
     "XPAYTYPE": "Yes"
   },
-  "UC24 : Xpay recurring payment first transaction (WIP)": {
+  "UC24 : recurring payment first transaction w/ external alias": {
     "ALIASMODE": "Yes",
     "RECURRINGSEQUENCE": "Yes",
     "3DSECUREPREFERENCE": "Yes",
@@ -309,7 +308,7 @@
     "SHIPTOSTATE": "Yes",
     "DELIVERYTIMEFRAME": "Yes"
   },
-  "UC25  : recurring payment first transaction w/ external alias": {
+  "UC25  : recurring payment frictionless first transaction w/ external alias w/ external MPI": {
     "ALIASMODE": "Yes",
     "RECURRINGSEQUENCE": "Yes",
     "3DSECUREACSTRANSACTIONID": "Yes",
@@ -323,7 +322,7 @@
     "3DSECUREVERSION": "Yes",
     "3DSECUREEXEMPTIONREASON": "Yes"
   },
-  "UC26 : recurring payment frictionless first transaction w/ external alias w/ external MPI": {
+  "UC26 : recurring payment first transaction w/ external alias w/ external MPI": {
     "ALIASMODE": "Yes",
     "RECURRINGSEQUENCE": "Yes",
     "3DSECUREACSTRANSACTIONID": "Yes",
@@ -336,7 +335,7 @@
     "3DSECURESCORE": "Yes",
     "3DSECUREVERSION": "Yes"
   },
-  "UC27 : recurring payment first transaction w/ external alias w/ external MPI": {
+  "UC27 : DTA recurring payment first transaction w/ external alias": {
     "ALIASMODE": "Yes",
     "RECURRINGSEQUENCE": "Yes"
   }

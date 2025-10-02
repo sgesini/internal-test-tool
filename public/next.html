@@ -139,37 +139,38 @@
     document.getElementById("redirect-success").value = `${base}/success.html`;
     document.getElementById("redirect-cancel").value  = `${base}/success.html`;
 
-    // Récupère un éventuel hfToken dans l'URL
     const params = new URLSearchParams(window.location.search);
     const hfToken = params.get("hfToken");
     if (hfToken) document.getElementById("hfToken").value = hfToken;
 
-    // Génère un ORDERID unique
     document.querySelector('input[name="params[ORDERID]"]').value = "RND" + Date.now();
 
-    // 🔑 Environnement choisi
     const lastEnv = localStorage.getItem("lastEnv");
     if (lastEnv) {
       document.getElementById("selected-environment").value = lastEnv;
       fetch(`/api/env/${encodeURIComponent(lastEnv)}`)
         .then(r => r.json())
         .then(data => {
-          if (data.identifier) {
-            document.getElementById("identifier").value = data.identifier;
-          }
+          if (data.identifier) document.getElementById("identifier").value = data.identifier;
         })
-        .catch(err => console.error("Erreur récupération identifier:", err));
+        .catch(console.error);
     }
 
-    // ⚡ intercept submit
     const form = document.getElementById("paymentForm");
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const formData = new FormData(form);
       const body = {};
-      formData.forEach((value, key) => body[key.replace(/^params\[(.+)\]$/, "$1")] = value);
-      body.environment = formData.get("environment");
+      formData.forEach((value, key) => {
+        // transforme params[FOO] -> FOO
+        const m = key.match(/^params\[(.+)\]$/);
+        if (m) {
+          body[m[1]] = value;
+        } else if (key === "environment") {
+          body.environment = value;
+        }
+      });
 
       try {
         const resp = await fetch("/processPayment", {
@@ -180,21 +181,22 @@
         const data = await resp.json();
         console.log("Réponse paiement:", data);
 
-        // 3️⃣ Gestion des cas
-        if (data.REDIRECTHTML) {
-          // 🟢 Cas 3DS : HTML encodé en base64
-          const decoded = atob(data.REDIRECTHTML);
-          document.open();
-          document.write(decoded);
-          document.close();
+        const res = data.response || {};
+        const reqId = data.reqId;
+
+        if (res.REDIRECTHTML) {
+          const decoded = atob(res.REDIRECTHTML);
+          const doc = document.open("text/html", "replace");
+          doc.write(decoded);
+          doc.close();
+          return;
         }
-        else if (data.REDIRECTURL) {
-          // 🟢 Cas 3DS : URL + POST params
+        if (res.REDIRECTURL) {
           const form3ds = document.createElement("form");
           form3ds.method = "POST";
-          form3ds.action = data.REDIRECTURL;
+          form3ds.action = res.REDIRECTURL;
 
-          const params3ds = new URLSearchParams(data.REDIRECTPOSTPARAMS);
+          const params3ds = new URLSearchParams(res.REDIRECTPOSTPARAMS);
           params3ds.forEach((v, k) => {
             const input = document.createElement("input");
             input.type = "hidden";
@@ -202,27 +204,30 @@
             input.value = v;
             form3ds.appendChild(input);
           });
-
           document.body.appendChild(form3ds);
           form3ds.submit();
-        } 
-        else {
-          if (data.EXECCODE && data.EXECCODE !== "0000") {
-            alert("❌ Erreur paiement: " + (data.MESSAGE || "Réponse inconnue"));
-          }
-          // ✅ Redirection vers success.html avec les données (succès ou échec)
-          const dataEncoded = encodeURIComponent(JSON.stringify(data));
-          window.location.href = `/success.html?data=${dataEncoded}`;
+          return;
         }
+
+        // ✅ Pas 3DS
+        const successUrl = new URL("success.html", window.location.origin);
+        successUrl.searchParams.set("reqId", reqId || "");
+        Object.entries(res).forEach(([k, v]) => {
+          if (v != null) successUrl.searchParams.set(k, v);
+        });
+        window.location.href = successUrl.toString();
+
       } catch (err) {
         console.error("Erreur fetch paiement:", err);
-        alert("❌ Erreur côté client: " + err.message);
-        const errorData = encodeURIComponent(JSON.stringify({ error: err.message }));
-        window.location.href = `/success.html?data=${errorData}`;
+        alert("Erreur côté client: " + err.message);
       }
     });
   });
 </script>
+
+
+
+
 
 </body>
 </html>
