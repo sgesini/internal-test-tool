@@ -432,6 +432,8 @@ body.dark-mode #env-panel select {
 #use-cases-panel {
   background: var(--background-color);
   border: 1px solid rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
   border-radius: 10px;
   padding: 24px;
   box-shadow: 0 4px 12px rgba(255,255,255,0.15);
@@ -512,4 +514,13 @@ body.dark-mode #use-cases-panel::-webkit-scrollbar-thumb {
   align-items: center;
 }
 
+#use-cases-panel button {
+  width: auto;
+  min-width: unset;
+  text-align: left; /* optionnel, pour aligner le texte à gauche */
+}
 
+#use-cases-panel button.active-uc {
+  background: orange;  /* ou une couleur qui se distingue */
+  font-weight: bold; 
+}

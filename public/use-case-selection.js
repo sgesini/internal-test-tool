@@ -26,25 +26,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     form.querySelector(".submit") || form.querySelector('input[type="submit"]');
 
   let currentFields = [];
+  let activeUC = null; // garde en mémoire le use-case actuellement actif
 
   Object.entries(useCases).forEach(([ucKey, ucData]) => {
-    const ucDiv = document.createElement("div");
-    ucDiv.style.display = "flex";
-    ucDiv.style.alignItems = "center";
-    ucDiv.style.gap = "10px";
-    ucDiv.style.marginBottom = "8px";
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = ucKey;
+    btn.className = "primary";
 
-    const addBtn = document.createElement("button");
-    addBtn.type = "button";
-    addBtn.textContent = ucKey;
-    addBtn.className = "primary";
+    btn.addEventListener("click", () => {
+      // Si on clique sur le même UC → toggle OFF
+      if (activeUC === ucKey) {
+        currentFields.forEach(el => el.remove());
+        currentFields = [];
+        activeUC = null;
+        btn.classList.remove("active-uc");
+        return;
+      }
 
-    const delBtn = document.createElement("button");
-    delBtn.type = "button";
-    delBtn.textContent = "X";
-    delBtn.className = "danger";
-
-    addBtn.addEventListener("click", () => {
+      // Sinon → on enlève les champs actuels et on ajoute les nouveaux
       currentFields.forEach(el => el.remove());
       currentFields = [];
 
@@ -56,20 +56,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         wrapper.classList.add("uc-field");
         wrapper.innerHTML = `
           <label class="uc-label">${param}${type}</label>
-          <input type="text" name="params[${param}]" value="${example}" />
+          <input type="text" name="${param}" value="${example}" />
         `;
         form.insertBefore(wrapper, submitBlock);
         currentFields.push(wrapper);
       });
+
+      // Met à jour l'état actif
+      activeUC = ucKey;
+
+      // Ajoute un style visuel au bouton actif (optionnel)
+      document.querySelectorAll("#use-cases-panel button").forEach(b => b.classList.remove("active-uc"));
+      btn.classList.add("active-uc");
     });
 
-    delBtn.addEventListener("click", () => {
-      currentFields.forEach(el => el.remove());
-      currentFields = [];
-    });
-
-    ucDiv.appendChild(addBtn);
-    ucDiv.appendChild(delBtn);
-    ucContainer.appendChild(ucDiv);
+    ucContainer.appendChild(btn);
   });
 });
