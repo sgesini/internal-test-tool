@@ -1,5 +1,6 @@
 // env-manager.js
-// ✅ version hybride : config.json (lecture seule) + environnements custom stockés dans localStorage
+// ✅ version hybride : config.json (lecture seule) + environnements locaux (localStorage)
+// ✅ met à jour tous les inputs dont l'id contient "identifier" dans le HTML actif
 
 document.addEventListener("DOMContentLoaded", () => {
   const envSelect      = document.getElementById("env-select");
@@ -11,9 +12,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const useEnvBtn      = document.getElementById("use-env");
   const deleteEnvBtn   = document.getElementById("delete-env");
 
-  let baseEnvs = {};   // 🟦 Depuis config.json (lecture seule)
-  let customEnvs = {}; // 🟨 Depuis localStorage (modifiable)
-  let allEnvs = {};    // Fusion des deux
+  let baseEnvs = {};   // 🟦 depuis config.json (lecture seule)
+  let customEnvs = {}; // 🟨 depuis localStorage (modifiable)
+  let allEnvs = {};    // fusion des deux
 
   // --- Masquage du champ secretKey ---
   envSecretKey.addEventListener("blur", () => {
@@ -23,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     envSecretKey.type = "text";
   });
 
+  // === 🔄 Remplir les champs du panneau Environnement ===
   function fillFields(env) {
     envName.value       = env?.name        || "";
     envKeyId.value      = env?.publicKeyId || "";
@@ -32,6 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (env?.secretKey) envSecretKey.type = "password";
   }
 
+  // === 🔄 Appliquer la config à l'app ===
   function setAppConfig(env) {
     window.APP_CONFIG = env
       ? {
@@ -42,6 +45,22 @@ document.addEventListener("DOMContentLoaded", () => {
       : null;
   }
 
+  // === 🔄 Met à jour tous les champs du HTML dont l'id contient "identifier" ===
+  function updateFormFieldsFromEnv(env) {
+    if (!env) return;
+
+    const allIdentifierFields = Array.from(document.querySelectorAll('input[id]'))
+      .filter(el => el.id.toLowerCase().includes("identifier"));
+
+    allIdentifierFields.forEach(field => {
+      field.value = env.identifier || "";
+      console.log(`🆕 Champ mis à jour : ${field.id} = ${env.identifier || ""}`);
+    });
+
+    document.dispatchEvent(new CustomEvent("envChanged", { detail: env }));
+  }
+
+  // === 🔄 Réinitialiser le bloc de paiement ===
   function applyToPayment() {
     if (typeof initializeHostedFields === "function") {
       const dark = document.body.classList.contains("dark-mode");
@@ -49,28 +68,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 🧠 Charge la config du serveur (lecture seule) + les environnements locaux
+  // === 📥 Chargement initial des environnements ===
   async function loadEnvsInitial() {
     try {
-      // Charger config.json (ou via ton endpoint /api/environments)
       const resp = await fetch("/api/environments");
       if (!resp.ok) throw new Error("Impossible de charger les environnements");
       baseEnvs = await resp.json();
 
-      // Charger les environnements locaux
       customEnvs = JSON.parse(localStorage.getItem("customEnvs") || "{}");
-
-      // Fusionner les deux
       allEnvs = { ...baseEnvs, ...customEnvs };
 
-      // Rafraîchir la liste déroulante
       envSelect.innerHTML = "";
       Object.keys(allEnvs).forEach(key => {
         const opt = document.createElement("option");
         opt.value = key;
         opt.textContent = allEnvs[key].name || key;
-        // Style différent si environnement local
-        if (customEnvs[key]) opt.textContent += " 🟡";
+        if (customEnvs[key]) opt.textContent += " 🟡"; // badge pour locaux
         envSelect.appendChild(opt);
       });
 
@@ -79,7 +92,6 @@ document.addEventListener("DOMContentLoaded", () => {
       newOpt.textContent = "+ New environment";
       envSelect.appendChild(newOpt);
 
-      // Restaurer la sélection précédente
       const lastEnv = localStorage.getItem("lastEnv");
       let selectedKey = lastEnv && allEnvs[lastEnv] ? lastEnv : Object.keys(allEnvs)[0];
       if (!selectedKey) selectedKey = "new";
@@ -88,6 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (selectedKey !== "new" && allEnvs[selectedKey]) {
         fillFields(allEnvs[selectedKey]);
         setAppConfig(allEnvs[selectedKey]);
+        updateFormFieldsFromEnv(allEnvs[selectedKey]);
         localStorage.setItem("lastEnv", selectedKey);
         applyToPayment();
       } else {
@@ -100,12 +113,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Changement de sélection
+  // === 🔁 Changement de sélection ===
   envSelect.addEventListener("change", () => {
     const key = envSelect.value;
     if (key === "new") {
       fillFields({});
       setAppConfig(null);
+      updateFormFieldsFromEnv(null);
       localStorage.removeItem("lastEnv");
       return;
     }
@@ -114,49 +128,53 @@ document.addEventListener("DOMContentLoaded", () => {
     if (env) {
       fillFields(env);
       setAppConfig(env);
+      updateFormFieldsFromEnv(env);
       localStorage.setItem("lastEnv", key);
       applyToPayment();
     }
   });
 
-  // ➕ Création ou mise à jour d’un environnement (sauvegarde dans localStorage)
+  // === 🧩 Bouton "Use Environment" ===
   useEnvBtn.addEventListener("click", async () => {
-  const key = envSelect.value;
-  const name        = envName.value.trim();
-  const publicKeyId = envKeyId.value.trim();
-  const publicKey   = envKey.value.trim();
-  const identifier  = envIdentifier.value.trim();
-  const secretKey   = envSecretKey.value.trim();
+    const key = envSelect.value;
+    const name        = envName.value.trim();
+    const publicKeyId = envKeyId.value.trim();
+    const publicKey   = envKey.value.trim();
+    const identifier  = envIdentifier.value.trim();
+    const secretKey   = envSecretKey.value.trim();
 
-  if (!name || !publicKeyId || !publicKey) {
-    alert("Veuillez renseigner un nom, un Public Key ID et un Public Key.");
-    return;
-  }
+    if (!name || !publicKeyId || !publicKey) {
+      alert("Veuillez renseigner un nom, un Public Key ID et un Public Key.");
+      return;
+    }
 
-  // 🟦 Si c’est un environnement officiel → juste l’appliquer
-  if (baseEnvs[key]) {
-    setAppConfig(baseEnvs[key]);
-    localStorage.setItem("lastEnv", key);
+    // 🟦 Environnement officiel → juste appliquer
+    if (baseEnvs[key]) {
+      const env = baseEnvs[key];
+      setAppConfig(env);
+      localStorage.setItem("lastEnv", key);
+      applyToPayment();
+      updateFormFieldsFromEnv(env);
+      alert("✅ Environnement officiel appliqué : " + key);
+      return;
+    }
+
+    // 🟨 Environnement local
+    const env = { name, publicKeyId, publicKey, identifier, secretKey };
+    customEnvs[name] = env;
+    localStorage.setItem("customEnvs", JSON.stringify(customEnvs));
+
+    await loadEnvsInitial();
+    envSelect.value = name;
+    setAppConfig(env);
+    localStorage.setItem("lastEnv", name);
     applyToPayment();
-    alert("✅ Environnement officiel appliqué : " + key);
-    return;
-  }
+    updateFormFieldsFromEnv(env);
 
-  // 🟨 Sinon : créer ou mettre à jour un environnement local
-  customEnvs[name] = { name, publicKeyId, publicKey, identifier, secretKey };
-  localStorage.setItem("customEnvs", JSON.stringify(customEnvs));
+    alert("✅ Environnement local appliqué : " + name);
+  });
 
-  await loadEnvsInitial();
-  envSelect.value = name;
-  setAppConfig(customEnvs[name]);
-  localStorage.setItem("lastEnv", name);
-  applyToPayment();
-
-  alert("✅ Environnement local appliqué : " + name);
-});
-
-
-  // 🗑️ Suppression d’un environnement (local uniquement)
+  // === 🗑️ Suppression d’un environnement local ===
   deleteEnvBtn?.addEventListener("click", async () => {
     const key = envSelect.value;
     if (!key || key === "new") {
@@ -164,7 +182,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // 🚫 Refuser la suppression d’un environnement officiel
     if (baseEnvs[key]) {
       alert("❌ Vous ne pouvez pas supprimer un environnement officiel.");
       return;
@@ -179,6 +196,6 @@ document.addEventListener("DOMContentLoaded", () => {
     alert(`🗑️ Environnement "${key}" supprimé.`);
   });
 
-  // Chargement initial
+  // 🚀 Chargement initial
   loadEnvsInitial();
 });
