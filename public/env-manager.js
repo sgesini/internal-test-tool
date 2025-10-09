@@ -1,6 +1,5 @@
 // env-manager.js
-// Gestion des environnements + application immédiate au bloc de paiement
-// ✅ version avec champ Secret Key masqué au blur
+// ✅ version hybride : config.json (lecture seule) + environnements custom stockés dans localStorage
 
 document.addEventListener("DOMContentLoaded", () => {
   const envSelect      = document.getElementById("env-select");
@@ -8,35 +7,31 @@ document.addEventListener("DOMContentLoaded", () => {
   const envKeyId       = document.getElementById("env-public-key-id");
   const envKey         = document.getElementById("env-public-key");
   const envIdentifier  = document.getElementById("env-identifier");
-  const envSecretKey   = document.getElementById("env-secret-key"); // 🔑 nouveau champ
+  const envSecretKey   = document.getElementById("env-secret-key");
   const useEnvBtn      = document.getElementById("use-env");
   const deleteEnvBtn   = document.getElementById("delete-env");
 
-  let allEnvs = {}; // cache local
+  let baseEnvs = {};   // 🟦 Depuis config.json (lecture seule)
+  let customEnvs = {}; // 🟨 Depuis localStorage (modifiable)
+  let allEnvs = {};    // Fusion des deux
 
-  // --- Masquage automatique de la secretKey -----------------
+  // --- Masquage du champ secretKey ---
   envSecretKey.addEventListener("blur", () => {
-    if (envSecretKey.type !== "password") {
-      envSecretKey.type = "password"; // masque le contenu quand on quitte le champ
-    }
+    if (envSecretKey.type !== "password") envSecretKey.type = "password";
   });
   envSecretKey.addEventListener("focus", () => {
-    envSecretKey.type = "text"; // ré-affiche temporairement lors de l'édition
+    envSecretKey.type = "text";
   });
-  // ----------------------------------------------------------
 
-  // Remplit les champs du formulaire quand on sélectionne un environnement
   function fillFields(env) {
     envName.value       = env?.name        || "";
     envKeyId.value      = env?.publicKeyId || "";
     envKey.value        = env?.publicKey   || "";
     envIdentifier.value = env?.identifier  || "";
-    envSecretKey.value  = env?.secretKey   || ""; // 🔑 affiche la secretKey
-    // On masque immédiatement si une clé est présente
+    envSecretKey.value  = env?.secretKey   || "";
     if (env?.secretKey) envSecretKey.type = "password";
   }
 
-  // Met à jour la config utilisée par le bloc de paiement
   function setAppConfig(env) {
     window.APP_CONFIG = env
       ? {
@@ -47,7 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
       : null;
   }
 
-  // Applique la config au bloc de paiement (script.js doit fournir initializeHostedFields)
   function applyToPayment() {
     if (typeof initializeHostedFields === "function") {
       const dark = document.body.classList.contains("dark-mode");
@@ -55,25 +49,37 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Charge les environnements depuis le serveur et remplit la liste
+  // 🧠 Charge la config du serveur (lecture seule) + les environnements locaux
   async function loadEnvsInitial() {
     try {
+      // Charger config.json (ou via ton endpoint /api/environments)
       const resp = await fetch("/api/environments");
       if (!resp.ok) throw new Error("Impossible de charger les environnements");
-      allEnvs = await resp.json();
+      baseEnvs = await resp.json();
 
+      // Charger les environnements locaux
+      customEnvs = JSON.parse(localStorage.getItem("customEnvs") || "{}");
+
+      // Fusionner les deux
+      allEnvs = { ...baseEnvs, ...customEnvs };
+
+      // Rafraîchir la liste déroulante
       envSelect.innerHTML = "";
       Object.keys(allEnvs).forEach(key => {
         const opt = document.createElement("option");
         opt.value = key;
         opt.textContent = allEnvs[key].name || key;
+        // Style différent si environnement local
+        if (customEnvs[key]) opt.textContent += " 🟡";
         envSelect.appendChild(opt);
       });
+
       const newOpt = document.createElement("option");
       newOpt.value = "new";
-      newOpt.textContent = "+ New environnement";
+      newOpt.textContent = "+ New environment";
       envSelect.appendChild(newOpt);
 
+      // Restaurer la sélection précédente
       const lastEnv = localStorage.getItem("lastEnv");
       let selectedKey = lastEnv && allEnvs[lastEnv] ? lastEnv : Object.keys(allEnvs)[0];
       if (!selectedKey) selectedKey = "new";
@@ -94,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Changement de sélection dans la liste
+  // Changement de sélection
   envSelect.addEventListener("change", () => {
     const key = envSelect.value;
     if (key === "new") {
@@ -103,6 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.removeItem("lastEnv");
       return;
     }
+
     const env = allEnvs[key];
     if (env) {
       fillFields(env);
@@ -112,70 +119,59 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Création / mise à jour d'un environnement
+  // ➕ Création ou mise à jour d’un environnement (sauvegarde dans localStorage)
   useEnvBtn.addEventListener("click", async () => {
     const name        = envName.value.trim();
     const publicKeyId = envKeyId.value.trim();
     const publicKey   = envKey.value.trim();
     const identifier  = envIdentifier.value.trim();
-    const secretKey   = envSecretKey.value.trim(); // 🔑 récupère la secretKey
+    const secretKey   = envSecretKey.value.trim();
 
     if (!name || !publicKeyId || !publicKey) {
       alert("Veuillez renseigner un nom, un Public Key ID et un Public Key.");
       return;
     }
 
-    try {
-      const resp = await fetch("/api/environments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          publicKeyId,
-          publicKey,
-          identifier,
-          secretKey    // 🔑 envoi au serveur
-        })
-      });
-      if (!resp.ok) throw new Error("Échec de la sauvegarde");
-
-      allEnvs[name] = { name, publicKeyId, publicKey, identifier, secretKey };
-      await loadEnvsInitial();
-      envSelect.value = name;
-      setAppConfig(allEnvs[name]);
-      localStorage.setItem("lastEnv", name);
-      applyToPayment();
-
-      alert("Environnement appliqué : " + name);
-    } catch (err) {
-      console.error("❌ Erreur enregistrement :", err);
-      alert("Impossible d’enregistrer l’environnement.");
+    // 🚫 Empêcher d’écraser un environnement officiel
+    if (baseEnvs[name]) {
+      alert("❌ Vous ne pouvez pas modifier un environnement officiel.");
+      return;
     }
+
+    // Enregistrement local
+    customEnvs[name] = { name, publicKeyId, publicKey, identifier, secretKey };
+    localStorage.setItem("customEnvs", JSON.stringify(customEnvs));
+
+    await loadEnvsInitial();
+    envSelect.value = name;
+    setAppConfig(customEnvs[name]);
+    localStorage.setItem("lastEnv", name);
+    applyToPayment();
+
+    alert("✅ Environnement ajouté localement : " + name);
   });
 
-  // Suppression d'un environnement
+  // 🗑️ Suppression d’un environnement (local uniquement)
   deleteEnvBtn?.addEventListener("click", async () => {
     const key = envSelect.value;
     if (!key || key === "new") {
       alert("Sélectionnez un environnement existant à supprimer.");
       return;
     }
-    if (!confirm(`Supprimer l'environnement "${key}" ?`)) return;
 
-    try {
-      const resp = await fetch(`/api/environments/${encodeURIComponent(key)}`, {
-        method: "DELETE"
-      });
-      if (!resp.ok) throw new Error("Échec de la suppression");
-
-      delete allEnvs[key];
-      localStorage.removeItem("lastEnv");
-      await loadEnvsInitial();
-      alert(`Environnement "${key}" supprimé.`);
-    } catch (err) {
-      console.error("❌ Erreur suppression :", err);
-      alert("Impossible de supprimer l'environnement.");
+    // 🚫 Refuser la suppression d’un environnement officiel
+    if (baseEnvs[key]) {
+      alert("❌ Vous ne pouvez pas supprimer un environnement officiel.");
+      return;
     }
+
+    if (!confirm(`Supprimer l'environnement local "${key}" ?`)) return;
+
+    delete customEnvs[key];
+    localStorage.setItem("customEnvs", JSON.stringify(customEnvs));
+    localStorage.removeItem("lastEnv");
+    await loadEnvsInitial();
+    alert(`🗑️ Environnement "${key}" supprimé.`);
   });
 
   // Chargement initial
