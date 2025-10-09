@@ -452,6 +452,7 @@ body.dark-mode #env-panel select {
   padding: 6px 10px;
   border-radius: 6px;
   cursor: pointer;
+  margin-top:5px;
   transition: background-color 0.2s ease;
 }
 /* Optionnel : style de la scrollbar (Chrome/Edge/Safari) */
@@ -523,4 +524,56 @@ body.dark-mode #use-cases-panel::-webkit-scrollbar-thumb {
 #use-cases-panel button.active-uc {
   background: orange;  /* ou une couleur qui se distingue */
   font-weight: bold; 
+}
+
+
+.param-btn.active-param {
+  background-color: goldenrod;
+  color: black;
+}
+/* Bloc global d’un champ ajouté dynamiquement */
+.extra-param-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 8px 0;
+}
+
+/* Label au-dessus du champ */
+.extra-param-field label {
+  color: goldenrod;
+  font-weight: 500;
+  font-size: 0.95em;
+  margin-bottom: 2px;
+}
+
+/* Ligne contenant input + poubelle */
+.extra-field-input-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Champ texte */
+.extra-field-input-row input[type="text"] {
+  flex: 1;
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid #555;
+  background-color: #1f1f1f;
+  color: #fff;
+}
+
+/* Bouton poubelle */
+.extra-field-input-row .remove-field-btn {
+  background: #333;
+  border: 1px solid #666;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 0.9em;
+}
+.extra-field-input-row .remove-field-btn:hover {
+  background: #555;
 }

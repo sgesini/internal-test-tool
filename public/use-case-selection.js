@@ -1,4 +1,9 @@
-// use-case-selection.js
+// Vérifie si un champ avec le même name existe déjà dans le formulaire
+window.formFieldExists = function (name) {
+  const form = document.getElementById("s2s-form") || document.querySelector("form");
+  return form?.querySelector(`[name="${name}"]`) !== null;
+};
+
 document.addEventListener("DOMContentLoaded", async () => {
   const ucContainer = document.getElementById("use-cases-panel");
   if (!ucContainer) return;
@@ -49,18 +54,25 @@ document.addEventListener("DOMContentLoaded", async () => {
       currentFields = [];
 
       Object.keys(ucData).forEach(param => {
-        const example = parameters[param]?.example || "";
-        const type = parameters[param]?.type ? ` (${parameters[param].type})` : "";
+  const example = parameters[param]?.example || "";
+  const type = parameters[param]?.type ? ` (${parameters[param].type})` : "";
 
-        const wrapper = document.createElement("div");
-        wrapper.classList.add("uc-field");
-        wrapper.innerHTML = `
-          <label class="uc-label">${param}${type}</label>
-          <input type="text" name="${param}" value="${example}" />
-        `;
-        form.insertBefore(wrapper, submitBlock);
-        currentFields.push(wrapper);
-      });
+  // 🧠 Vérifie si le champ existe déjà
+  const existing = form.querySelector(`[name="${param}"]`);
+  if (existing) {
+    existing.closest(".uc-field, .extra-param-field")?.remove();
+  }
+
+  const wrapper = document.createElement("div");
+  wrapper.classList.add("uc-field");
+  wrapper.innerHTML = `
+    <label class="uc-label">${param}${type}</label>
+    <input type="text" name="${param}" value="${example}" />
+  `;
+  form.insertBefore(wrapper, submitBlock);
+  currentFields.push(wrapper);
+});
+
 
       // Met à jour l'état actif
       activeUC = ucKey;
