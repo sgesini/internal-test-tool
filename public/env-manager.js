@@ -121,35 +121,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ➕ Création ou mise à jour d’un environnement (sauvegarde dans localStorage)
   useEnvBtn.addEventListener("click", async () => {
-    const name        = envName.value.trim();
-    const publicKeyId = envKeyId.value.trim();
-    const publicKey   = envKey.value.trim();
-    const identifier  = envIdentifier.value.trim();
-    const secretKey   = envSecretKey.value.trim();
+  const key = envSelect.value;
+  const name        = envName.value.trim();
+  const publicKeyId = envKeyId.value.trim();
+  const publicKey   = envKey.value.trim();
+  const identifier  = envIdentifier.value.trim();
+  const secretKey   = envSecretKey.value.trim();
 
-    if (!name || !publicKeyId || !publicKey) {
-      alert("Veuillez renseigner un nom, un Public Key ID et un Public Key.");
-      return;
-    }
+  if (!name || !publicKeyId || !publicKey) {
+    alert("Veuillez renseigner un nom, un Public Key ID et un Public Key.");
+    return;
+  }
 
-    // 🚫 Empêcher d’écraser un environnement officiel
-    if (baseEnvs[name]) {
-      alert("❌ Vous ne pouvez pas modifier un environnement officiel.");
-      return;
-    }
-
-    // Enregistrement local
-    customEnvs[name] = { name, publicKeyId, publicKey, identifier, secretKey };
-    localStorage.setItem("customEnvs", JSON.stringify(customEnvs));
-
-    await loadEnvsInitial();
-    envSelect.value = name;
-    setAppConfig(customEnvs[name]);
-    localStorage.setItem("lastEnv", name);
+  // 🟦 Si c’est un environnement officiel → juste l’appliquer
+  if (baseEnvs[key]) {
+    setAppConfig(baseEnvs[key]);
+    localStorage.setItem("lastEnv", key);
     applyToPayment();
+    alert("✅ Environnement officiel appliqué : " + key);
+    return;
+  }
 
-    alert("✅ Environnement ajouté localement : " + name);
-  });
+  // 🟨 Sinon : créer ou mettre à jour un environnement local
+  customEnvs[name] = { name, publicKeyId, publicKey, identifier, secretKey };
+  localStorage.setItem("customEnvs", JSON.stringify(customEnvs));
+
+  await loadEnvsInitial();
+  envSelect.value = name;
+  setAppConfig(customEnvs[name]);
+  localStorage.setItem("lastEnv", name);
+  applyToPayment();
+
+  alert("✅ Environnement local appliqué : " + name);
+});
+
 
   // 🗑️ Suppression d’un environnement (local uniquement)
   deleteEnvBtn?.addEventListener("click", async () => {
