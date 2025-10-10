@@ -25,11 +25,8 @@
   </header>
 
   <div id="payment-wrapper">
-    <!-- ======= Bloc Use-cases ======= -->
-     <div id="extra-params-panel">
-      <div id="use-cases-panel" class="panel"></div>
-      <div id="extra-params-panel"></div>
-      </div>
+    <div id="use-cases-panel" class="panel"></div>
+
     <!-- ======= FORMULAIRE S2S ======= -->
     <form id="s2s-form" class="panel">
       <h3>Paiement S2S</h3>
@@ -77,11 +74,9 @@
       <label>Description</label>
       <input type="text" name="DESCRIPTION" value="Knows nothing" />
 
-    <input type="hidden" name="REDIRECTURLSUCCESS" id="redirect-success" />
-    <input type="hidden" name="REDIRECTURLCANCEL"  id="redirect-cancel" />
+      <input type="hidden" name="REDIRECTURLSUCCESS" id="redirect-success" />
+      <input type="hidden" name="REDIRECTURLCANCEL"  id="redirect-cancel" />
 
-
-      <!-- Champs cachés -->
       <input type="hidden" name="VERSION" value="3.0" />
       <input type="hidden" name="HASH" id="hash-field" />
       <input type="hidden" name="environment" id="env-hidden" />
@@ -131,46 +126,33 @@
   <script src="test-cards.js"></script>
 
   <script>
-  // URLs de redirection
   document.addEventListener("DOMContentLoaded", () => {
     const base = window.location.origin;
     document.getElementById("redirect-success").value = `${base}/success.html`;
     document.getElementById("redirect-cancel").value  = `${base}/success.html`;
-  });
 
-  document.addEventListener("DOMContentLoaded", () => {
-    // Génère un ORDERID unique
     document.getElementById("orderid-field").value = "RND" + Date.now();
 
     const form = document.getElementById("s2s-form");
     const hashField = document.getElementById("hash-field");
-    const envHidden = document.getElementById("env-hidden");
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const environmentName = localStorage.getItem("lastEnv");
-      if (!environmentName) {
-        alert("Please choose an environment before paying.");
+      // 🧠 Récupère l'environnement sélectionné depuis le localStorage
+      const lastEnv = localStorage.getItem("lastEnv");
+      const customEnvs = JSON.parse(localStorage.getItem("customEnvs") || "{}");
+      const env = lastEnv ? customEnvs[lastEnv] : null;
+
+      if (!env || !env.secretKey) {
+        alert("❌ Aucun environnement valide trouvé. Sélectionnez-en un avant de continuer.");
         return;
       }
 
-      // 🧠 Récupère l'environnement complet (config.json ou localStorage)
-      let environment = null;
-      try {
-        const resp = await fetch(`/api/env/${encodeURIComponent(environmentName)}`);
-        if (resp.ok) environment = await resp.json();
-      } catch (err) {
-        console.warn("⚠️ Impossible de charger l'environnement officiel :", err);
+      // Met à jour l'identifiant
+      if (env.identifier) {
+        document.getElementById("identifier-field").value = env.identifier;
       }
-
-      if (!environment) {
-        const localEnvs = JSON.parse(localStorage.getItem("customEnvs") || "{}");
-        environment = localEnvs[environmentName];
-      }
-
-      // fallback minimal
-      if (!environment) environment = environmentName;
 
       // --- Construction des paramètres du formulaire ---
       const fd = new FormData(form);
@@ -180,23 +162,21 @@
       });
 
       try {
-        // 1️⃣ Calcul du hash
+        // 1️⃣ Calcul du hash (via le serveur)
         const resp = await fetch("/computeHash", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ environment, params })
+          body: JSON.stringify({ params, secretKey: env.secretKey })
         });
 
         const data = await resp.json();
         if (!data.hash) throw new Error(data.error || "Erreur calcul hash");
 
         hashField.value = data.hash;
-        envHidden.value = environmentName;
+        params.HASH = data.hash;
+        params.secretKey = env.secretKey;
 
         // 2️⃣ Envoi du paiement
-        params.HASH = data.hash;
-        params.environment = environment;
-
         const resp2 = await fetch("/processPayment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -209,7 +189,7 @@
         const res = result.response || {};
         const reqId = result.reqId;
 
-        // 3️⃣ Gestion 3DS et redirections
+        // 3️⃣ Gestion 3DS / redirection
         if (res.REDIRECTHTML) {
           const decoded = atob(res.REDIRECTHTML);
           const doc = document.open("text/html", "replace");
@@ -230,7 +210,6 @@
             input.value = v;
             form3ds.appendChild(input);
           });
-
           document.body.appendChild(form3ds);
           form3ds.submit();
           return;
@@ -246,26 +225,23 @@
 
       } catch (err) {
         console.error("Erreur S2S:", err);
-        alert("Impossible de traiter le paiement: " + err.message);
+        alert("❌ Impossible de traiter le paiement: " + err.message);
       }
     });
-  });
 
-  // Cartes de test
-  document.addEventListener("DOMContentLoaded", () => {
-    const modal   = document.getElementById("test-cards-modal");
+    // Cartes de test
+    const modal = document.getElementById("test-cards-modal");
     const openBtn = document.getElementById("open-test-cards");
-    const closeBtn= document.getElementById("close-test-cards");
+    const closeBtn = document.getElementById("close-test-cards");
     openBtn.addEventListener("click", () => {
       buildTestCardsTable();
       modal.classList.remove("hidden");
     });
     closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
-    modal.addEventListener("click", e => { if (e.target === modal) modal.classList.add("hidden"); });
+    modal.addEventListener("click", e => {
+      if (e.target === modal) modal.classList.add("hidden");
+    });
   });
   </script>
-
-
-
 </body>
 </html>

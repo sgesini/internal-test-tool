@@ -70,162 +70,196 @@
   </style>
 </head>
 <body class="dark-mode">
-    <header id="main-header">
-      <div id="top-left-corner">
-      <a href="index.html" class="back-home-btn">← Home page</a>
-      </div>
-      </header>
-  <div id="payment-wrapper">
-    <!-- ======= Bloc Use-cases ======= -->
-    <div id="use-cases-panel" class="panel"></div>
-
-    <!-- ======= Bloc Paiement ======= -->
-    <div class="card">
-      <h1>Paiement sécurisé</h1>
-
-      <form id="paymentForm">
-        <input type="hidden" name="method" value="payment" />
-        <input type="hidden" name="params[VERSION]" value="3.0" />
-        <input type="hidden" name="params[DESCRIPTION]" value="Cart content" />
-        <input type="hidden" name="params[ORDERID]" value="" />
-        <input type="hidden" name="params[CLIENTUSERAGENT]" value="Mozilla/5.0" />
-        <input type="hidden" name="params[CLIENTIP]" value="192.168.1.1" />
-        <input type="hidden" name="params[HASH]" value="" />
-        <input type="hidden" name="params[3DSECUREDISPLAYMODE]" value="raw"/>
-        <input type="hidden" name="params[REDIRECTURLSUCCESS]" id="redirect-success" />
-        <input type="hidden" name="params[REDIRECTURLCANCEL]"  id="redirect-cancel" />
-        <input type="hidden" id="identifier" name="params[IDENTIFIER]" value="" />
-
-        <!-- 🔑 Environnement choisi -->
-        <input type="hidden" name="environment" id="selected-environment" />
-
-        <div class="form-group">
-          <label for="operationType">Operation Type</label>
-          <input type="text" id="operationType" name="params[OPERATIONTYPE]" value="authorization" />
-        </div>
-
-        <div class="form-group">
-          <label for="amount">Amount</label>
-          <input type="text" id="amount" name="params[AMOUNT]" value="12345" />
-        </div>
-
-        <div class="form-group">
-          <label for="clientEmail">Client Email</label>
-          <input type="email" id="clientEmail" name="params[CLIENTEMAIL]" value="john.snow@example.com" />
-        </div>
-
-        <div class="form-group">
-          <label for="clientIdent">Client Identifier</label>
-          <input type="text" id="clientIdent" name="params[CLIENTIDENT]" value="john.snow.12" />
-        </div>
-
-        <div class="form-group">
-          <label for="hfToken">HFTOKEN</label>
-          <input type="text" id="hfToken" name="params[HFTOKEN]" value="" />
-        </div>
-
-        <input type="submit" value="Payer" />
-        <div class="form-note">Le hash est calculé côté serveur, sécurisé 🔒</div>
-      </form>
-    </div>
+<header id="main-header">
+  <div id="top-left-corner">
+    <a href="index.html" class="back-home-btn">← Home page</a>
   </div>
+</header>
 
-  <script src="use-case-selection.js"></script>
-  <script src="env-manager.js"></script>
+<div id="payment-wrapper">
+  <div id="use-cases-panel" class="panel"></div>
 
-  <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const base = window.location.origin;
-    document.getElementById("redirect-success").value = `${base}/success.html`;
-    document.getElementById("redirect-cancel").value  = `${base}/success.html`;
+  <div class="card">
+    <h1>Paiement sécurisé</h1>
 
-    const params = new URLSearchParams(window.location.search);
-    const hfToken = params.get("hfToken");
-    if (hfToken) document.getElementById("hfToken").value = hfToken;
+    <form id="paymentForm">
+      <input type="hidden" name="method" value="payment" />
+      <input type="hidden" name="params[VERSION]" value="3.0" />
+      <input type="hidden" name="params[DESCRIPTION]" value="Cart content" />
+      <input type="hidden" name="params[ORDERID]" value="" />
+      <input type="hidden" name="params[CLIENTUSERAGENT]" value="Mozilla/5.0" />
+      <input type="hidden" name="params[CLIENTIP]" value="192.168.1.1" />
+      <input type="hidden" name="params[HASH]" value="" />
+      <input type="hidden" name="params[3DSECUREDISPLAYMODE]" value="raw"/>
+      <input type="hidden" name="params[REDIRECTURLSUCCESS]" id="redirect-success" />
+      <input type="hidden" name="params[REDIRECTURLCANCEL]"  id="redirect-cancel" />
+      <input type="hidden" id="identifier" name="params[IDENTIFIER]" value="" />
 
-    document.querySelector('input[name="params[ORDERID]"]').value = "RND" + Date.now();
+      <!-- 🔑 Environnement choisi -->
+      <input type="hidden" name="environment" id="selected-environment" />
 
-    const lastEnv = localStorage.getItem("lastEnv");
-    if (lastEnv) {
-      document.getElementById("selected-environment").value = lastEnv;
-      fetch(`/api/env/${encodeURIComponent(lastEnv)}`)
-        .then(r => r.json())
-        .then(data => {
-          if (data.identifier) document.getElementById("identifier").value = data.identifier;
-        })
-        .catch(console.error);
-    }
+      <div class="form-group">
+        <label for="operationType">Operation Type</label>
+        <input type="text" id="operationType" name="params[OPERATIONTYPE]" value="authorization" />
+      </div>
 
-    const form = document.getElementById("paymentForm");
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+      <div class="form-group">
+        <label for="amount">Amount</label>
+        <input type="text" id="amount" name="params[AMOUNT]" value="12345" />
+      </div>
 
-      const formData = new FormData(form);
-      const body = {};
-      formData.forEach((value, key) => {
-        // transforme params[FOO] -> FOO
-        const m = key.match(/^params\[(.+)\]$/);
-        if (m) {
-          body[m[1]] = value;
-        } else if (key === "environment") {
-          body.environment = value;
-        }
-      });
+      <div class="form-group">
+        <label for="clientEmail">Client Email</label>
+        <input type="email" id="clientEmail" name="params[CLIENTEMAIL]" value="john.snow@example.com" />
+      </div>
 
-      try {
-        const resp = await fetch("/processPayment", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body)
-        });
-        const data = await resp.json();
-        console.log("Réponse paiement:", data);
+      <div class="form-group">
+        <label for="clientIdent">Client Identifier</label>
+        <input type="text" id="clientIdent" name="params[CLIENTIDENT]" value="john.snow.12" />
+      </div>
 
-        const res = data.response || {};
-        const reqId = data.reqId;
+      <div class="form-group">
+        <label for="hfToken">HFTOKEN</label>
+        <input type="text" id="hfToken" name="params[HFTOKEN]" value="" />
+      </div>
 
-        if (res.REDIRECTHTML) {
-          const decoded = atob(res.REDIRECTHTML);
-          const doc = document.open("text/html", "replace");
-          doc.write(decoded);
-          doc.close();
-          return;
-        }
-        if (res.REDIRECTURL) {
-          const form3ds = document.createElement("form");
-          form3ds.method = "POST";
-          form3ds.action = res.REDIRECTURL;
+      <input type="submit" value="Payer" />
+      <div class="form-note">Le hash est calculé côté serveur, sécurisé 🔒</div>
+    </form>
+  </div>
+</div>
 
-          const params3ds = new URLSearchParams(res.REDIRECTPOSTPARAMS);
-          params3ds.forEach((v, k) => {
-            const input = document.createElement("input");
-            input.type = "hidden";
-            input.name = k;
-            input.value = v;
-            form3ds.appendChild(input);
-          });
-          document.body.appendChild(form3ds);
-          form3ds.submit();
-          return;
-        }
+<script src="use-case-selection.js"></script>
+<script src="extra-params.js"></script>
+<script src="env-manager.js"></script>
 
-        // ✅ Pas 3DS
-        const successUrl = new URL("success.html", window.location.origin);
-        successUrl.searchParams.set("reqId", reqId || "");
-        Object.entries(res).forEach(([k, v]) => {
-          if (v != null) successUrl.searchParams.set(k, v);
-        });
-        window.location.href = successUrl.toString();
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const base = window.location.origin;
+  document.getElementById("redirect-success").value = `${base}/success.html`;
+  document.getElementById("redirect-cancel").value  = `${base}/success.html`;
 
-      } catch (err) {
-        console.error("Erreur fetch paiement:", err);
-        alert("Erreur côté client: " + err.message);
+  // 🧩 Récupère le hfToken dans l'URL (si présent)
+  const params = new URLSearchParams(window.location.search);
+  const hfToken = params.get("hfToken");
+  if (hfToken) document.getElementById("hfToken").value = hfToken;
+
+  // 🧩 Génère un ORDERID unique
+  document.querySelector('input[name="params[ORDERID]"]').value = "RND" + Date.now();
+
+  // === 🔐 Chargement environnement depuis le localStorage ===
+  const lastEnv = localStorage.getItem("lastEnv");
+  const customEnvs = JSON.parse(localStorage.getItem("customEnvs") || "{}");
+  const env = lastEnv ? customEnvs[lastEnv] : null;
+
+  if (!env || !env.secretKey) {
+    alert("⚠️ Aucun environnement valide trouvé dans le navigateur (clé manquante).");
+    return;
+  }
+
+  document.getElementById("selected-environment").value = lastEnv;
+  document.getElementById("identifier").value = env.identifier || "";
+  console.log(`✅ Environnement "${lastEnv}" chargé depuis localStorage.`);
+
+  // === 💳 Gestion du formulaire de paiement ===
+  const form = document.getElementById("paymentForm");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    // Récupération des champs du formulaire
+    const formData = new FormData(form);
+    const params = {};
+    formData.forEach((value, key) => {
+      const match = key.match(/^params\[(.+)\]$/);
+      if (match) {
+        params[match[1]] = value;
       }
     });
+
+    // Calcul du hash côté serveur avec la clé secrète
+    let hashValue = "";
+    try {
+      const respHash = await fetch("/computeHash", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          params,
+          secretKey: env.secretKey // ✅ clé directement envoyée au serveur
+        })
+      });
+
+      const hashData = await respHash.json();
+      if (!hashData.hash) throw new Error("Hash non retourné par le serveur");
+
+      hashValue = hashData.hash;
+      params.HASH = hashValue; // on ajoute le hash dans les params
+      console.log("✅ Hash calculé:", hashValue);
+    } catch (err) {
+      console.error("Erreur calcul du hash:", err);
+      alert("Erreur calcul du hash: " + err.message);
+      return;
+    }
+
+    // Envoi du paiement vers le serveur
+    try {
+      const respPay = await fetch("/processPayment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...params,
+          secretKey: env.secretKey // ⚠️ requis côté serveur aussi
+        })
+      });
+
+      const data = await respPay.json();
+      console.log("Réponse paiement:", data);
+
+      const res = data.response || {};
+      const reqId = data.reqId;
+
+      // Redirections 3DS
+      if (res.REDIRECTHTML) {
+        const decoded = atob(res.REDIRECTHTML);
+        const doc = document.open("text/html", "replace");
+        doc.write(decoded);
+        doc.close();
+        return;
+      }
+
+      if (res.REDIRECTURL) {
+        const form3ds = document.createElement("form");
+        form3ds.method = "POST";
+        form3ds.action = res.REDIRECTURL;
+
+        const params3ds = new URLSearchParams(res.REDIRECTPOSTPARAMS);
+        params3ds.forEach((v, k) => {
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = k;
+          input.value = v;
+          form3ds.appendChild(input);
+        });
+
+        document.body.appendChild(form3ds);
+        form3ds.submit();
+        return;
+      }
+
+      // ✅ Pas de 3DS → redirection vers success.html
+      const successUrl = new URL("success.html", window.location.origin);
+      successUrl.searchParams.set("reqId", reqId || "");
+      Object.entries(res).forEach(([k, v]) => {
+        if (v != null) successUrl.searchParams.set(k, v);
+      });
+      window.location.href = successUrl.toString();
+
+    } catch (err) {
+      console.error("Erreur paiement:", err);
+      alert("Erreur côté client: " + err.message);
+    }
   });
+});
 </script>
-
-
 
 
 
