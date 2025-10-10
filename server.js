@@ -1,3 +1,7 @@
+// ===============================================
+// 🌐 server.js — version hybride (config.json + envs locaux sans stockage serveur)
+// ===============================================
+
 const express    = require("express");
 const fetch      = require("node-fetch");
 const crypto     = require("crypto");
@@ -9,6 +13,7 @@ const http       = require("http");
 const app  = express();
 const PORT = 3000;
 const dataPath = path.join(__dirname, "config.json");
+
 // === In-memory store (TTL) pour les requêtes envoyées ===
 const paymentStore = new Map(); // reqId -> { payload: {...}, ts: number }
 const PAYMENT_TTL_MS = 15 * 60 * 1000; // 15 min
@@ -31,7 +36,7 @@ function appendQuery(urlStr, paramsObj) {
 }
 
 function genReqId() {
-  return (crypto.randomUUID ? crypto.randomUUID() : crypto.randomBytes(16).toString("hex"));
+  return crypto.randomUUID ? crypto.randomUUID() : crypto.randomBytes(16).toString("hex");
 }
 
 app.use(express.static(path.join(__dirname, "public")));
@@ -43,7 +48,7 @@ app.use(bodyParser.json());
 // ===============================
 function computeHash(params, secretKey) {
   const sortedKeys = Object.keys(params)
-    .filter(k => k !== "HASH" && k !== "method") // exclude 'method'
+    .filter(k => k !== "HASH" && k !== "method")
     .sort();
   let clearString  = secretKey;
   for (const key of sortedKeys) {
@@ -56,15 +61,24 @@ function computeHash(params, secretKey) {
 }
 
 // ===============================
-// 🛠 API : Hash generator
+// 🧮 API : Hash generator (compatible envs locaux)
 // ===============================
 app.post("/computeHash", (req, res) => {
   const { params, environment } = req.body;
-  const envs = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
-  const env  = envs[environment];
-  if (!env || !env.secretKey) return res.status(400).json({ error: "bad env" });
+  let secretKey = null;
 
-  const hash = computeHash(params, env.secretKey);
+  if (typeof environment === "string") {
+    // 🔵 Cas "officiel" → cherche dans config.json
+    const envs = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
+    secretKey = envs[environment]?.secretKey || null;
+  } else if (environment && environment.secretKey) {
+    // 🟡 Cas "local" → clé directement fournie par le navigateur
+    secretKey = environment.secretKey;
+  }
+
+  if (!secretKey) return res.status(400).json({ error: "missing secretKey" });
+
+  const hash = computeHash(params, secretKey);
   res.json({ hash });
 });
 
@@ -78,25 +92,29 @@ app.post("/processPayment", async (req, res) => {
       return res.status(400).json({ error: "Missing environment" });
     }
 
-    // 🆕 Empty fields cleaner
-    const cleanParams = {};
-    for (const [k, v] of Object.entries(rawParams)) {
-      if (v !== null && v !== undefined && v !== "") {
-        cleanParams[k] = v;
-      }
+    // 🟡 Gestion des environnements hybrides
+    let secretKey = null;
+    if (typeof environment === "string") {
+      const envs = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
+      secretKey = envs[environment]?.secretKey || null;
+    } else if (environment && environment.secretKey) {
+      secretKey = environment.secretKey;
     }
 
-    // Secret key injector
-    const envs = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
-    const env  = envs[environment];
-    if (!env || !env.secretKey) {
+    if (!secretKey) {
       return res.status(400).json({ error: "Invalid environment or secretKey" });
     }
 
-    // 🆕 reqId pour corréler la requête / redirection
+    // Nettoyage des champs vides
+    const cleanParams = {};
+    for (const [k, v] of Object.entries(rawParams)) {
+      if (v !== null && v !== undefined && v !== "") cleanParams[k] = v;
+    }
+
+    // Génère reqId
     const reqId = genReqId();
 
-    // 🆕 On injecte reqId dans les URLs de redirection (avant le hash)
+    // Injecte reqId dans les URLs de redirection
     if (cleanParams.REDIRECTURLSUCCESS) {
       cleanParams.REDIRECTURLSUCCESS = appendQuery(cleanParams.REDIRECTURLSUCCESS, { reqId });
     }
@@ -104,27 +122,24 @@ app.post("/processPayment", async (req, res) => {
       cleanParams.REDIRECTURLCANCEL  = appendQuery(cleanParams.REDIRECTURLCANCEL,  { reqId });
     }
 
-    // Removes HASH from the calculation if present
+    // Calcule le hash
     const paramsForHash = { ...cleanParams };
     delete paramsForHash.HASH;
-    const hash = computeHash(paramsForHash, env.secretKey);
+    const hash = computeHash(paramsForHash, secretKey);
     cleanParams.HASH = hash;
 
-    // 🆕 Sauvegarde la requête EXACTEMENT telle qu'envoyée
+    // Sauvegarde la requête en mémoire
     savePaymentRequest(reqId, { requestSent: { ...cleanParams }, environment });
 
-    // POST Body builder
+    // Construit le corps POST
     const forwardBody = new URLSearchParams();
     forwardBody.append("method", "payment");
     for (const [k, v] of Object.entries(cleanParams)) {
       forwardBody.append(`params[${k}]`, v);
     }
 
-    // Logging
-    console.log("=== Champs envoyés à Dalenys (nettoyés) ===");
+    console.log("=== Champs envoyés à Dalenys ===");
     console.log(cleanParams);
-    console.log("=== Corps transmis à Dalenys ===");
-    console.log(forwardBody.toString());
 
     const response = await fetch(
       "https://secure-test.dalenys.com/front/service/rest/process",
@@ -136,14 +151,10 @@ app.post("/processPayment", async (req, res) => {
     );
 
     const text = await response.text();
-    console.log("=== Réponse Dalenys ===");
-    console.log(text);
-
     let parsedResponse;
     try { parsedResponse = JSON.parse(text); }
     catch { parsedResponse = { raw: text }; }
 
-    // 🟢 On renvoie reqId + requestSent + response
     res.json({
       reqId,
       requestSent: { ...cleanParams },
@@ -166,44 +177,38 @@ app.post("/processHostedForm", (req, res) => {
       return res.status(400).json({ error: "Missing environment" });
     }
 
-    const envs = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
-    const env  = envs[environment];
-    if (!env || !env.secretKey) {
+    // 🟡 Gestion hybride (config.json + local)
+    let secretKey = null;
+    if (typeof environment === "string") {
+      const envs = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
+      secretKey = envs[environment]?.secretKey || null;
+    } else if (environment && environment.secretKey) {
+      secretKey = environment.secretKey;
+    }
+
+    if (!secretKey) {
       return res.status(400).json({ error: "Invalid environment or secretKey" });
     }
 
     // Nettoie les champs
     const cleanParams = {};
     for (const [k, v] of Object.entries(params)) {
-      if (v !== null && v !== undefined && v !== "") {
-        cleanParams[k] = v;
-      }
+      if (v !== null && v !== undefined && v !== "") cleanParams[k] = v;
     }
 
-    // ✅ Génère un reqId unique
     const reqId = genReqId();
-
-    // ✅ Patch des redirect URLs AVANT le calcul du hash
     const baseUrl = `http://localhost:${PORT}`;
     cleanParams.REDIRECTURLSUCCESS = `${baseUrl}/success.html?reqId=${reqId}`;
     cleanParams.REDIRECTURLCANCEL  = `${baseUrl}/success.html?reqId=${reqId}`;
 
-    // ✅ Calcule le HASH
     const paramsForHash = { ...cleanParams };
     delete paramsForHash.HASH;
     delete paramsForHash.environment;
-
-    const hash = computeHash(paramsForHash, env.secretKey);
+    const hash = computeHash(paramsForHash, secretKey);
     cleanParams.HASH = hash;
 
-    // ✅ Stockage côté serveur (avec TTL)
     savePaymentRequest(reqId, { requestSent: cleanParams, environment });
 
-    console.log("=== HostedForm request stored ===");
-    console.log("reqId =", reqId);
-    console.log(cleanParams);
-
-    // 📝 Construit un formulaire auto‐soumis vers Dalenys
     const formHtml = `
       <html><body onload="document.forms[0].submit()">
         <form method="POST" action="https://secure-test.dalenys.com/front/form/process">
@@ -221,37 +226,17 @@ app.post("/processHostedForm", (req, res) => {
   }
 });
 
-
-
-
-
-
 // ===============================
-// 🌐 API : Récupérer la requête envoyée (via reqId)
+// 🌐 API : Récupérer la requête envoyée
 // ===============================
 app.get("/api/payment-request/:id", (req, res) => {
   const item = paymentStore.get(req.params.id);
   if (!item) return res.status(404).json({ error: "not found" });
-  res.json(item.payload); // { requestSent: {...}, environment }
+  res.json(item.payload);
 });
 
-
 // ===============================
-// 🌐 Endpoint pour récupérer le dernier paiement
-// ===============================
-app.get("/lastPayment", (req, res) => {
-  if (lastPayment) {
-    res.json(lastPayment);
-  } else {
-    res.status(404).json({ error: "Aucun paiement enregistré" });
-  }
-});
-
-
-
-
-// ===============================
-// 🌐 API : Environment handler 
+// 🌐 API : Environnements officiels (lecture seule)
 // ===============================
 app.get("/api/environments", (req, res) => {
   try {
@@ -260,47 +245,6 @@ app.get("/api/environments", (req, res) => {
   } catch (err) {
     console.error("Erreur lecture config.json:", err);
     res.status(500).json({ error: "Impossible de lire config.json" });
-  }
-});
-
-app.post("/api/environments", (req, res) => {
-  try {
-    const envs = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
-    const { name, publicKeyId, publicKey, identifier, secretKey } = req.body;
-
-    if (!name || !publicKeyId || !publicKey) {
-      return res.status(400).json({ error: "name, publicKeyId et publicKey sont requis" });
-    }
-
-    envs[name] = {
-      name,
-      publicKeyId,
-      publicKey,
-      identifier: identifier || "",
-      secretKey: secretKey || envs[name]?.secretKey || ""
-    };
-
-    fs.writeFileSync(dataPath, JSON.stringify(envs, null, 2));
-    res.json({ success: true, updated: envs[name] });
-  } catch (err) {
-    console.error("Erreur écriture config.json:", err);
-    res.status(500).json({ error: "Impossible d'enregistrer l'environnement" });
-  }
-});
-
-app.delete("/api/environments/:name", (req, res) => {
-  try {
-    const envs = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
-    const name = req.params.name;
-    if (!envs[name]) {
-      return res.status(404).json({ error: "Environnement introuvable" });
-    }
-    delete envs[name];
-    fs.writeFileSync(dataPath, JSON.stringify(envs, null, 2));
-    res.json({ success: true });
-  } catch (err) {
-    console.error("Erreur suppression config.json:", err);
-    res.status(500).json({ error: "Impossible de supprimer l'environnement" });
   }
 });
 
@@ -316,14 +260,16 @@ app.get("/api/env/:name", (req, res) => {
   }
 });
 
-// Home page
+// ===============================
+// 🏠 Home page
+// ===============================
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// -------------------------------------------
-// 🌐 HTTP redirection : localhost:80 -> :3000
-// -------------------------------------------
+// ===============================
+// 🌐 HTTP redirection : :80 -> :3000
+// ===============================
 http.createServer((req, res) => {
   const redirectUrl = `http://localhost:${PORT}${req.url}`;
   res.writeHead(301, { Location: redirectUrl });
@@ -332,9 +278,9 @@ http.createServer((req, res) => {
   console.log("🌐 Redirection active : http://localhost → http://localhost:3000");
 });
 
-// -------------------------------------------
+// ===============================
 // 🚀 Start server
-// -------------------------------------------
+// ===============================
 app.listen(PORT, () => {
   console.log(`🚀 Serveur principal sur http://localhost:${PORT}`);
 });

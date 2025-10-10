@@ -129,7 +129,6 @@
   <script src="extra-params.js"></script>
   <script src="script.js"></script>
   <script src="test-cards.js"></script>
-  
 
   <script>
   // URLs de redirection
@@ -140,16 +139,8 @@
   });
 
   document.addEventListener("DOMContentLoaded", () => {
+    // Génère un ORDERID unique
     document.getElementById("orderid-field").value = "RND" + Date.now();
-
-    const lastEnv = localStorage.getItem("lastEnv");
-    if (lastEnv) {
-      fetch(`/api/env/${encodeURIComponent(lastEnv)}`)
-        .then(r => r.json())
-        .then(env => {
-          if (env.identifier) document.getElementById("identifier-field").value = env.identifier;
-        });
-    }
 
     const form = document.getElementById("s2s-form");
     const hashField = document.getElementById("hash-field");
@@ -158,19 +149,34 @@
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const environment = localStorage.getItem("lastEnv");
-      if (!environment) {
+      const environmentName = localStorage.getItem("lastEnv");
+      if (!environmentName) {
         alert("Please choose an environment before paying.");
         return;
       }
 
-      // Construire params
+      // 🧠 Récupère l'environnement complet (config.json ou localStorage)
+      let environment = null;
+      try {
+        const resp = await fetch(`/api/env/${encodeURIComponent(environmentName)}`);
+        if (resp.ok) environment = await resp.json();
+      } catch (err) {
+        console.warn("⚠️ Impossible de charger l'environnement officiel :", err);
+      }
+
+      if (!environment) {
+        const localEnvs = JSON.parse(localStorage.getItem("customEnvs") || "{}");
+        environment = localEnvs[environmentName];
+      }
+
+      // fallback minimal
+      if (!environment) environment = environmentName;
+
+      // --- Construction des paramètres du formulaire ---
       const fd = new FormData(form);
       const params = {};
       fd.forEach((v, k) => {
-        if (k !== "environment" && k !== "method" && k !== "HASH") {
-          params[k] = v;
-        }
+        if (k !== "environment" && k !== "method" && k !== "HASH") params[k] = v;
       });
 
       try {
@@ -180,28 +186,31 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ environment, params })
         });
+
         const data = await resp.json();
-        if (!data.hash) throw new Error("Erreur calcul hash");
+        if (!data.hash) throw new Error(data.error || "Erreur calcul hash");
+
         hashField.value = data.hash;
-        envHidden.value = environment;
+        envHidden.value = environmentName;
 
         // 2️⃣ Envoi du paiement
         params.HASH = data.hash;
         params.environment = environment;
+
         const resp2 = await fetch("/processPayment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(params)
         });
+
         const result = await resp2.json();
         console.log("Réponse S2S:", result);
 
         const res = result.response || {};
         const reqId = result.reqId;
 
-        // 3️⃣ Gestion des cas
+        // 3️⃣ Gestion 3DS et redirections
         if (res.REDIRECTHTML) {
-          // 3DS avec HTML encodé
           const decoded = atob(res.REDIRECTHTML);
           const doc = document.open("text/html", "replace");
           doc.write(decoded);
@@ -209,7 +218,6 @@
           return;
         }
         if (res.REDIRECTURL) {
-          // 3DS URL + POST params (la success URL contient déjà reqId)
           const form3ds = document.createElement("form");
           form3ds.method = "POST";
           form3ds.action = res.REDIRECTURL;
@@ -228,7 +236,7 @@
           return;
         }
 
-        // ✅ Pas 3DS → redirection vers success.html avec la réponse en query + reqId
+        // ✅ Pas de 3DS → redirection vers success.html
         const successUrl = new URL("success.html", window.location.origin);
         successUrl.searchParams.set("reqId", reqId || "");
         Object.entries(res).forEach(([k, v]) => {
@@ -243,7 +251,7 @@
     });
   });
 
-  // Cartes de test (inchangé)
+  // Cartes de test
   document.addEventListener("DOMContentLoaded", () => {
     const modal   = document.getElementById("test-cards-modal");
     const openBtn = document.getElementById("open-test-cards");
@@ -255,7 +263,8 @@
     closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
     modal.addEventListener("click", e => { if (e.target === modal) modal.classList.add("hidden"); });
   });
-</script>
+  </script>
+
 
 
 </body>
