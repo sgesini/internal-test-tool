@@ -25,69 +25,97 @@
   </header>
 
   <div id="payment-wrapper">
-    <div id="extra-params-panel">
   <div id="use-cases-panel" class="panel"></div>
-  <div id="extra-params-panel"></div>
-  </div>
 
     <!-- ======= FORMULAIRE S2S ======= -->
-    <form id="s2s-form" class="panel">
-      <h3>Paiement S2S</h3>
+<form id="s2s-form" class="panel">
+  <h3>Payment form</h3>
+  <div id="extra-params-panel"></div>
 
-      <input type="hidden" name="method" value="payment" />
-      <label>Identifier</label>
-      <input type="text" name="IDENTIFIER" id="identifier-field" />
+  <input type="hidden" name="method" value="payment" />
 
-      <label>Card Number</label>
-      <input type="text" name="CARDCODE" value="4065600099110000" />
+  <div class="form-group">
+    <label for="identifier-field">Identifier</label>
+    <input type="text" name="IDENTIFIER" id="identifier-field" />
+  </div>
 
-      <label>Card CVV</label>
-      <input type="text" name="CARDCVV" value="123" />
+  <div class="form-group">
+    <label for="cardcode">Card Number</label>
+    <input type="text" id="cardcode" name="CARDCODE" value="4065600099110000" />
+  </div>
 
-      <label>Card Validity Date (MM-YY)</label>
-      <input type="text" name="CARDVALIDITYDATE" value="01-30" />
+  <div class="form-group">
+    <label for="cardcvv">Card CVV</label>
+    <input type="text" id="cardcvv" name="CARDCVV" value="123" />
+  </div>
 
-      <label>Card Full Name</label>
-      <input type="text" name="CARDFULLNAME" value="JOHN SNOW" />
+  <div class="form-group">
+    <label for="cardvalidity">Card Validity Date (MM-YY)</label>
+    <input type="text" id="cardvalidity" name="CARDVALIDITYDATE" value="01-30" />
+  </div>
 
-      <label>Operation Type</label>
-      <input type="text" name="OPERATIONTYPE" value="authorization" />
+  <div class="form-group">
+    <label for="cardfullname">Card Full Name</label>
+    <input type="text" id="cardfullname" name="CARDFULLNAME" value="JOHN SNOW" />
+  </div>
 
-      <label>Order ID</label>
-      <input type="text" name="ORDERID" id="orderid-field" />
+  <div class="form-group">
+    <label for="operationtype">Operation Type</label>
+    <input type="text" id="operationtype" name="OPERATIONTYPE" value="authorization" />
+  </div>
 
-      <label>Amount (in cents)</label>
-      <input type="text" name="AMOUNT" value="1000" />
+  <div class="form-group">
+    <label for="orderid-field">Order ID</label>
+    <input type="text" id="orderid-field" name="ORDERID" />
+  </div>
 
-      <label>Client Ident</label>
-      <input type="text" name="CLIENTIDENT" value="john.snow" />
+  <div class="form-group">
+    <label for="amount">Amount (in cents)</label>
+    <input type="text" id="amount" name="AMOUNT" value="1000" />
+  </div>
 
-      <label>Client Email</label>
-      <input type="text" name="CLIENTEMAIL" value="john.snow@example.com" />
+  <div class="form-group">
+    <label for="clientident">Client Ident</label>
+    <input type="text" id="clientident" name="CLIENTIDENT" value="john.snow" />
+  </div>
 
-      <label>Client Referrer</label>
-      <input type="text" name="CLIENTREFERRER" value="https://your_shop.com/order?id=1234" />
+  <div class="form-group">
+    <label for="clientemail">Client Email</label>
+    <input type="text" id="clientemail" name="CLIENTEMAIL" value="john.snow@example.com" />
+  </div>
 
-      <label>Client User Agent</label>
-      <input type="text" name="CLIENTUSERAGENT" value="Mozilla/5.0" />
+  <div class="form-group">
+    <label for="clientreferrer">Client Referrer</label>
+    <input type="text" id="clientreferrer" name="CLIENTREFERRER" value="https://your_shop.com/order?id=1234" />
+  </div>
 
-      <label>Client IP</label>
-      <input type="text" name="CLIENTIP" value="10.1.1.1" />
+  <div class="form-group">
+    <label for="clientuseragent">Client User Agent</label>
+    <input type="text" id="clientuseragent" name="CLIENTUSERAGENT" value="Mozilla/5.0" />
+  </div>
 
-      <label>Description</label>
-      <input type="text" name="DESCRIPTION" value="Knows nothing" />
+  <div class="form-group">
+    <label for="clientip">Client IP</label>
+    <input type="text" id="clientip" name="CLIENTIP" value="10.1.1.1" />
+  </div>
 
-      <input type="hidden" name="REDIRECTURLSUCCESS" id="redirect-success" />
-      <input type="hidden" name="REDIRECTURLCANCEL"  id="redirect-cancel" />
+  <div class="form-group">
+    <label for="description">Description</label>
+    <input type="text" id="description" name="DESCRIPTION" value="Knows nothing" />
+  </div>
 
-      <input type="hidden" name="VERSION" value="3.0" />
-      <input type="hidden" name="HASH" id="hash-field" />
-      <input type="hidden" name="environment" id="env-hidden" />
+  <!-- Champs cachés -->
+  <input type="hidden" name="REDIRECTURLSUCCESS" id="redirect-success" />
+  <input type="hidden" name="REDIRECTURLCANCEL" id="redirect-cancel" />
+  <input type="hidden" name="VERSION" value="3.0" />
+  <input type="hidden" name="HASH" id="hash-field" />
+  <input type="hidden" name="environment" id="env-hidden" />
 
-      <p class="submit">
-        <input type="submit" value="Send S2S Payment" />
-      </p>
-    </form>
+  <p class="submit">
+    <input type="submit" value="Send S2S Payment" />
+  </p>
+</form>
+
 
     <!-- ======= Panneau Environnements ======= -->
     <div id="env-panel" class="panel">
@@ -125,126 +153,10 @@
   <script src="env-manager.js"></script>
   <script src="use-case-selection.js"></script>
   <script src="extra-params.js"></script>
+  <script src="payment-utils.js"></script>
+  <script src="form-handler.js"></script>
   <script src="script.js"></script>
   <script src="test-cards.js"></script>
 
-  <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const base = window.location.origin;
-    document.getElementById("redirect-success").value = `${base}/success.html`;
-    document.getElementById("redirect-cancel").value  = `${base}/success.html`;
-
-    document.getElementById("orderid-field").value = "RND" + Date.now();
-
-    const form = document.getElementById("s2s-form");
-    const hashField = document.getElementById("hash-field");
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      // 🧠 Récupère l'environnement sélectionné depuis le localStorage
-      const lastEnv = localStorage.getItem("lastEnv");
-      const customEnvs = JSON.parse(localStorage.getItem("customEnvs") || "{}");
-      const env = lastEnv ? customEnvs[lastEnv] : null;
-
-      if (!env || !env.secretKey) {
-        alert("❌ Aucun environnement valide trouvé. Sélectionnez-en un avant de continuer.");
-        return;
-      }
-
-      // Met à jour l'identifiant
-      if (env.identifier) {
-        document.getElementById("identifier-field").value = env.identifier;
-      }
-
-      // --- Construction des paramètres du formulaire ---
-      const fd = new FormData(form);
-      const params = {};
-      fd.forEach((v, k) => {
-        if (k !== "environment" && k !== "method" && k !== "HASH") params[k] = v;
-      });
-
-      try {
-        // 1️⃣ Calcul du hash (via le serveur)
-        const resp = await fetch("/computeHash", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ params, secretKey: env.secretKey })
-        });
-
-        const data = await resp.json();
-        if (!data.hash) throw new Error(data.error || "Erreur calcul hash");
-
-        hashField.value = data.hash;
-        params.HASH = data.hash;
-        params.secretKey = env.secretKey;
-
-        // 2️⃣ Envoi du paiement
-        const resp2 = await fetch("/processPayment", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(params)
-        });
-
-        const result = await resp2.json();
-        console.log("Réponse S2S:", result);
-
-        const res = result.response || {};
-        const reqId = result.reqId;
-
-        // 3️⃣ Gestion 3DS / redirection
-        if (res.REDIRECTHTML) {
-          const decoded = atob(res.REDIRECTHTML);
-          const doc = document.open("text/html", "replace");
-          doc.write(decoded);
-          doc.close();
-          return;
-        }
-        if (res.REDIRECTURL) {
-          const form3ds = document.createElement("form");
-          form3ds.method = "POST";
-          form3ds.action = res.REDIRECTURL;
-
-          const params3ds = new URLSearchParams(res.REDIRECTPOSTPARAMS);
-          params3ds.forEach((v, k) => {
-            const input = document.createElement("input");
-            input.type = "hidden";
-            input.name = k;
-            input.value = v;
-            form3ds.appendChild(input);
-          });
-          document.body.appendChild(form3ds);
-          form3ds.submit();
-          return;
-        }
-
-        // ✅ Pas de 3DS → redirection vers success.html
-        const successUrl = new URL("success.html", window.location.origin);
-        successUrl.searchParams.set("reqId", reqId || "");
-        Object.entries(res).forEach(([k, v]) => {
-          if (v != null) successUrl.searchParams.set(k, v);
-        });
-        window.location.href = successUrl.toString();
-
-      } catch (err) {
-        console.error("Erreur S2S:", err);
-        alert("❌ Impossible de traiter le paiement: " + err.message);
-      }
-    });
-
-    // Cartes de test
-    const modal = document.getElementById("test-cards-modal");
-    const openBtn = document.getElementById("open-test-cards");
-    const closeBtn = document.getElementById("close-test-cards");
-    openBtn.addEventListener("click", () => {
-      buildTestCardsTable();
-      modal.classList.remove("hidden");
-    });
-    closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
-    modal.addEventListener("click", e => {
-      if (e.target === modal) modal.classList.add("hidden");
-    });
-  });
-  </script>
 </body>
 </html>

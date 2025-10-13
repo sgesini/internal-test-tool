@@ -29,7 +29,8 @@
   <div id="payment-wrapper" style="justify-content:center;gap:40px;">
 
     <!-- FORMULAIRE Paiement -->
-    <form method="post" action="javascript:void(0);" id="cart" name="dalenysForm" onsubmit="return tokenizeHandler()">
+    <form method="post" action="javascript:void(0);" id="cart" name="dalenysForm" onsubmit="return tokenizeHandler()"   data-ignore-handler="true"
+>
       <p>
         <label>Card number</label>
         <span class="input-container" id="card-container"></span>
@@ -91,57 +92,9 @@
   <!-- JS -->
   <script src="env-manager.js"></script>
 <script src="script.js"></script>
-<script src="test-cards.js"></script>  
-
-  <script>
-    document.addEventListener("DOMContentLoaded", async () => {
-      const lastEnv = localStorage.getItem("lastEnv");
-      if (!lastEnv) {
-        console.warn("⚠️ Aucun environnement sélectionné, Hosted Fields ne peut pas s'initialiser.");
-        return;
-      }
-
-      try {
-        const resp = await fetch("/api/environments");
-        if (!resp.ok) throw new Error("Impossible de charger les environnements");
-        const envs = await resp.json();
-
-        const env = envs[lastEnv];
-        if (!env) {
-          console.error("❌ Environnement introuvable:", lastEnv);
-          return;
-        }
-
-        // 🔑 Injection de la config globale pour Hosted Fields
-        window.APP_CONFIG = {
-          publicKeyId: env.publicKeyId,
-          publicKey: env.publicKey,
-          identifier: env.identifier
-        };
-
-        // ⚡ Initialise Hosted Fields (script.js fournit la fonction)
-        if (typeof initializeHostedFields === "function") {
-          initializeHostedFields();
-        }
-      } catch (err) {
-        console.error("Erreur lors du chargement de l'environnement:", err);
-      }
-    });
-
-    // ouverture/fermeture pop-in cartes test
-    document.addEventListener("DOMContentLoaded", () => {
-      const modal   = document.getElementById("test-cards-modal");
-      const openBtn = document.getElementById("open-test-cards");
-      const closeBtn= document.getElementById("close-test-cards");
-      openBtn.addEventListener("click", () => {
-        buildTestCardsTable();
-        modal.classList.remove("hidden");
-      });
-      closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
-      modal.addEventListener("click", e => {
-        if (e.target === modal) modal.classList.add("hidden");
-      });
-    });
-  </script>
+<script src="payment-utils.js"></script>
+<script src="form-handler.js"></script>
+<script src="test-cards.js"></script>
+<script src="hostedfields-handler.js"></script>
 </body>
 </html>
