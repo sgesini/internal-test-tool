@@ -4,23 +4,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   const form = document.getElementById("s2s-form") || document.querySelector("form");
   if (!form || !container) return;
 
-  // 🧠 Fonction utilitaire globale : vérifier si un champ existe déjà
+  // 🧠 Fonction utilitaire : vérifier si un champ existe déjà
   window.formFieldExists = function (name) {
     return form.querySelector(`[name="${name}"]`) !== null;
   };
 
-  // Charger les paramètres depuis parameters.json
+  // 📦 Charger les paramètres depuis parameters.json
   const paramResp = await fetch("parameters.json");
   const parameters = await paramResp.json();
 
-  // Bouton principal
+  // 🧩 Bouton d’ouverture de la modale
   const addParamsBtn = document.createElement("button");
   addParamsBtn.type = "button";
   addParamsBtn.id = "open-extra-params";
   addParamsBtn.className = "secondary";
   addParamsBtn.textContent = "➕ Add more parameters";
   addParamsBtn.style.marginTop = "12px";
-
   container.appendChild(addParamsBtn);
 
   // === Création de la modale ===
@@ -31,6 +30,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     <div class="test-modal-content">
       <span id="close-extra-params" class="close-btn">&times;</span>
       <h3>Select Additional Parameters</h3>
+      <!-- 🔍 Barre de recherche -->
+      <input
+        type="text"
+        id="param-search"
+        placeholder="Search parameters..."
+        style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc;"
+      />
       <div id="extra-params-container" style="max-height:400px; overflow-y:auto;"></div>
     </div>
   `;
@@ -38,10 +44,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const modalContainer = modal.querySelector("#extra-params-container");
   const closeBtn = modal.querySelector("#close-extra-params");
+  const searchInput = modal.querySelector("#param-search");
   const activeExtraFields = new Map();
 
-  // === Créer un bouton pour chaque paramètre ===
-  Object.entries(parameters).forEach(([param, info]) => {
+  // === Génère tous les boutons de paramètres ===
+  const buttons = Object.entries(parameters).map(([param, info]) => {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.textContent = param;
@@ -49,18 +56,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     btn.style.display = "inline-block";
     btn.style.margin = "4px";
     btn.style.fontSize = "0.9em";
+    btn.dataset.searchText = `${param} ${(info.type || "")} ${(info.example || "")}`.toLowerCase();
 
     const example = info.example ?? "";
     const type = info.type ? ` (${info.type})` : "";
 
     btn.addEventListener("click", () => {
-      // Si déjà ajouté via ce script → on le retire
       if (activeExtraFields.has(param)) {
         activeExtraFields.get(param).remove();
         activeExtraFields.delete(param);
         btn.classList.remove("active-param");
       } else {
-        // 🧠 Vérifie si le champ existe déjà (via un use-case ou ailleurs)
         if (window.formFieldExists(param)) {
           btn.style.backgroundColor = "#a00";
           btn.title = "Ce champ existe déjà dans le formulaire";
@@ -71,7 +77,6 @@ document.addEventListener("DOMContentLoaded", async () => {
           return;
         }
 
-        // === Ajouter le champ ===
         const wrapper = document.createElement("div");
         wrapper.classList.add("extra-param-field");
         wrapper.innerHTML = `
@@ -85,7 +90,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         const submitBlock = form.querySelector(".submit");
         form.insertBefore(wrapper, submitBlock);
 
-        // Suppression depuis le formulaire
         wrapper.querySelector(".remove-field-btn").addEventListener("click", () => {
           wrapper.remove();
           activeExtraFields.delete(param);
@@ -98,6 +102,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     modalContainer.appendChild(btn);
+    return btn;
+  });
+
+  // === 🔍 Recherche dynamique ===
+  searchInput.addEventListener("input", (e) => {
+    const term = e.target.value.toLowerCase();
+    buttons.forEach((btn) => {
+      btn.style.display = btn.dataset.searchText.includes(term) ? "inline-block" : "none";
+    });
   });
 
   // === Ouvrir / fermer la modale ===

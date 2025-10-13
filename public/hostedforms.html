@@ -94,78 +94,84 @@
   <script src="test-cards.js"></script>
 
   <script>
-  // ✅ Injection dynamique des URLs de redirection
-  document.addEventListener("DOMContentLoaded", () => {
-    const base = window.location.origin;
-    document.getElementById("redirect-success").value = `${base}/success.html`;
-    document.getElementById("redirect-cancel").value  = `${base}/success.html`;
-  });
+document.addEventListener("DOMContentLoaded", () => {
+  const base = window.location.origin;
+  document.getElementById("redirect-success").value = `${base}/success.html`;
+  document.getElementById("redirect-cancel").value  = `${base}/success.html`;
+});
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const orderField = document.getElementById("orderid-field");
-    const idField    = document.getElementById("identifier-field");
-    const form       = document.getElementById("hosted-forms");
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("hosted-forms");
+  const orderField = document.getElementById("orderid-field");
+  const idField    = document.getElementById("identifier-field");
 
-    // Génère ORDERID unique
-    orderField.value = "RND" + Date.now();
+  // 🆔 Génère un ORDERID unique
+  orderField.value = "RND" + Date.now();
 
-    // Injecte IDENTIFIER depuis env choisi
-    const lastEnv = localStorage.getItem("lastEnv");
-    if (lastEnv) {
-      document.getElementById("env-hidden").value = lastEnv;
-      fetch(`/api/env/${encodeURIComponent(lastEnv)}`)
-        .then(r => r.json())
-        .then(env => { if (env.identifier) idField.value = env.identifier; });
+  // 🔐 Récupère environnement depuis localStorage
+  const lastEnv = localStorage.getItem("lastEnv");
+  const customEnvs = JSON.parse(localStorage.getItem("customEnvs") || "{}");
+  const env = lastEnv ? customEnvs[lastEnv] : null;
+
+  if (env) {
+    if (env.identifier) idField.value = env.identifier;
+    console.log(`✅ Environnement "${lastEnv}" chargé depuis localStorage.`);
+  } else {
+    alert("⚠️ Aucun environnement sélectionné dans le navigateur.");
+  }
+
+  // 🧾 Interception du submit
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (!env || !env.secretKey) {
+      alert("❌ Clé secrète manquante. Sélectionnez un environnement valide.");
+      return;
     }
 
-    // Interception du submit pour passer par notre backend
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const environment = localStorage.getItem("lastEnv");
-      if (!environment) {
-        alert("Please choose an environment before paying.");
-        return;
-      }
+    // Collecte des données du formulaire
+    const fd = new FormData(form);
+    const params = {};
+    fd.forEach((v, k) => { params[k] = v; });
 
-      const fd = new FormData(form);
-      const params = {};
-      fd.forEach((v, k) => { params[k] = v; });
+    try {
+      // 💡 Envoi au backend (compute + redirection)
+      const resp = await fetch("/processHostedForm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ params, secretKey: env.secretKey })
+      });
 
-      try {
-        const resp = await fetch("/processHostedForm", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ environment, params })
-        });
+      if (!resp.ok) throw new Error("Erreur backend HostedForm");
+      const html = await resp.text();
 
-        if (!resp.ok) throw new Error("Erreur backend HostedForm");
-        const html = await resp.text();
+      // 🔄 Injection du HTML pour redirection POST vers Dalenys
+      const win = window.open("", "_self");
+      win.document.write(html);
+      win.document.close();
 
-        // Injection pour forcer la redirection POST vers Dalenys
-        const win = window.open("", "_self");
-        win.document.write(html);
-        win.document.close();
-      } catch (err) {
-        console.error("❌ HostedForm error :", err);
-        alert("Impossible de lancer le paiement HostedForm : " + err.message);
-      }
-    });
+    } catch (err) {
+      console.error("❌ HostedForm error :", err);
+      alert("Impossible de lancer le paiement HostedForm : " + err.message);
+    }
   });
+});
 
-  // ouverture/fermeture pop-in cartes test
-  document.addEventListener("DOMContentLoaded", () => {
-    const modal   = document.getElementById("test-cards-modal");
-    const openBtn = document.getElementById("open-test-cards");
-    const closeBtn= document.getElementById("close-test-cards");
-    openBtn.addEventListener("click", () => {
-      buildTestCardsTable();
-      modal.classList.remove("hidden");
-    });
-    closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
-    modal.addEventListener("click", e => {
-      if (e.target === modal) modal.classList.add("hidden");
-    });
+// 💳 Pop-in cartes test
+document.addEventListener("DOMContentLoaded", () => {
+  const modal   = document.getElementById("test-cards-modal");
+  const openBtn = document.getElementById("open-test-cards");
+  const closeBtn= document.getElementById("close-test-cards");
+  openBtn.addEventListener("click", () => {
+    buildTestCardsTable();
+    modal.classList.remove("hidden");
   });
-  </script>
+  closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
+  modal.addEventListener("click", e => {
+    if (e.target === modal) modal.classList.add("hidden");
+  });
+});
+</script>
+
 </body>
 </html>

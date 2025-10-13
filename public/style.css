@@ -577,3 +577,18 @@ body.dark-mode #use-cases-panel::-webkit-scrollbar-thumb {
 .extra-field-input-row .remove-field-btn:hover {
   background: #555;
 }
+
+.param-btn.warning {
+  background-color: #a00 !important;
+  color: #fff !important;
+}
+
+#param-search {
+  outline: none;
+  border: 1px solid #555;
+  background: #222;
+  color: #eee;
+}
+#param-search:focus {
+  border-color: #0af;
+}
