@@ -29,7 +29,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   modal.innerHTML = `
     <div class="test-modal-content">
       <span id="close-extra-params" class="close-btn">&times;</span>
-      <h3>Select Additional Parameters</h3>
+      <h3 style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+        <span>Select Additional Parameters</span>
+        <a href="https://developer.dalenys.com/ui/developer-doc/parameter-reference.html"
+           target="_blank"
+           rel="noopener noreferrer"
+           style="font-size:0.8em; color:#4da3ff; text-decoration:none;">
+          (Check the parameters reference here)
+        </a>
+      </h3>
+
       <!-- 🔍 Barre de recherche -->
       <input
         type="text"
