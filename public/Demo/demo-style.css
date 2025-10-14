@@ -1,0 +1,282 @@
+/* ======================================================
+   Demo Shop Styles — "Test Merchant"
+   ====================================================== */
+
+/* ---- Layout général ---- */
+body {
+  margin: 0;
+  font-family: "Segoe UI", Roboto, sans-serif;
+  background: #f7f8fa;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ---- Header ---- */
+/* ---- Header ---- */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: #1e2a38;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  z-index: 2000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.header-left,
+.header-center,
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.header-center {
+  flex: 1;
+  justify-content: center;
+}
+
+.back-home-btn {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.2s ease;
+}
+
+.back-home-btn:hover {
+  opacity: 0.7;
+}
+
+
+/* ---- Main grid ---- */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+  padding-top: 90px;
+  margin-right: 350px; /* espace réservé au panneau latéral */
+}
+
+.articles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: flex-start;
+}
+
+/* ---- Article cards ---- */
+.article-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  width: 220px;
+  padding: 1rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.15s ease;
+  cursor: pointer;
+}
+
+.article-card:hover {
+  transform: translateY(-3px);
+}
+
+.article-card img {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 0.8rem;
+}
+
+.article-card .name {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  text-align: center;
+}
+
+.article-card .price {
+  color: #0070f3;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* ---- Boutons + / - ---- */
+.article-controls button {
+  background: #0070f3;
+  border: none;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.article-controls button:hover {
+  background: #0056b3;
+}
+
+.article-qty-badge {
+  background: #222;
+  font-size: 0.8rem;
+  border-radius: 12px;
+  padding: 2px 6px;
+  color: #fff;
+  margin-left: 2px;
+}
+
+/* ======================================================
+   PANIER — bandeau latéral fixe
+   ====================================================== */
+#cart-sidebar {
+  position: fixed;
+  top: 70px; /* hauteur du header */
+  right: 0;
+  bottom: 0;
+  width: 340px;
+  background: #fff;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.08);
+  border-left: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+#cart-panel {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+#cart-panel h3 {
+  margin-top: 0;
+  text-align: center;
+}
+
+.cart-item {
+  border-bottom: 1px solid #eee;
+  padding: 0.5rem 0;
+}
+
+.cart-item:last-child {
+  border-bottom: none;
+}
+
+.cart-summary {
+  margin-top: auto;
+  font-size: 1.1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.cart-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.cart-actions button {
+  flex: 1;
+  padding: 0.6rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.cart-actions .clear-cart {
+  background: #eee;
+}
+
+.cart-actions .checkout {
+  background: #0070f3;
+  color: #fff;
+}
+
+.cart-actions .checkout:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---- Adresses client ---- */
+#addresses-section {
+  padding: 2rem;
+  background: #fff;
+  border-top: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-right: 350px; /* pour ne pas passer sous le panneau */
+}
+
+#addresses-section h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.address-block {
+  background: #fafafa;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.address-block h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.8rem;
+}
+
+.form-group label {
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+
+.form-group input {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0.5rem 0.7rem;
+  font-size: 1rem;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+  main {
+    margin-right: 0;
+  }
+
+  #cart-sidebar {
+    position: static;
+    width: 100%;
+    box-shadow: none;
+    border-left: none;
+  }
+
+  #addresses-section {
+    margin-right: 0;
+  }
+}

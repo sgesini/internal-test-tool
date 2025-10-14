@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test Merchant – Demo Shop</title>
+  <link rel="stylesheet" href="demo-style.css" />
+</head>
+
+<body>
+  <header>
+    <div class="header-left">
+      <a href="../index.html" class="back-home-btn">← Home</a>
+    </div>
+    <div class="header-center">🛍️ Test Merchant</div>
+    <div class="header-right"></div>
+  </header>
+
+  <main>
+    <!-- zone des articles -->
+    <section class="articles">
+      <div class="article-card" data-id="jean" data-name="Jean slim" data-price="2000">
+        <img src="https://images.unsplash.com/photo-1584370848010-d7fe6bc767ec?auto=format&fit=crop&w=400&q=60" alt="Jean slim" />
+        <div class="name">Jean slim</div>
+        <div class="price">20,00 €</div>
+      </div>
+
+      <div class="article-card" data-id="tshirt" data-name="T-shirt coton" data-price="1000">
+        <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=400&q=60" alt="T-shirt" />
+        <div class="name">T-shirt coton</div>
+        <div class="price">10,00 €</div>
+      </div>
+
+      <div class="article-card" data-id="gilet" data-name="Gilet laine" data-price="3000">
+        <img src="https://plus.unsplash.com/premium_photo-1663088624029-5886b4fe8960?auto=format&fit=crop&q=80&w=1740" alt="Gilet laine" />
+        <div class="name">Gilet laine</div>
+        <div class="price">30,00 €</div>
+      </div>
+    </section>
+
+    <!-- panneau panier latéral -->
+    <aside id="cart-sidebar">
+      <div id="cart-panel">
+        <h3>Votre panier</h3>
+        <div id="cart-items"></div>
+        <div class="cart-summary">
+          <p><strong>Total :</strong> <span id="cart-total">0 €</span></p>
+        </div>
+        <div class="cart-actions">
+          <button class="clear-cart">Vider</button>
+          <button class="checkout" disabled>Procéder au paiement</button>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- 🔽 Bloc adresses client -->
+  <section id="addresses-section">
+    <h2>Adresses du client</h2>
+
+    <!-- Adresse de facturation -->
+    <div class="address-block" id="billing-address">
+      <h3 class="address-header">Adresse de facturation</h3>
+      <div class="address-fields">
+        <div class="form-group">
+          <label>Nom complet</label>
+          <input type="text" id="billing-name" placeholder="Jean Dupont" />
+        </div>
+        <div class="form-group">
+          <label>Adresse</label>
+          <input type="text" id="billing-street" placeholder="12 rue de la République" />
+        </div>
+        <div class="form-group">
+          <label>Code postal</label>
+          <input type="text" id="billing-zip" placeholder="75001" />
+        </div>
+        <div class="form-group">
+          <label>Ville</label>
+          <input type="text" id="billing-city" placeholder="Paris" />
+        </div>
+        <div class="form-group">
+          <label>Pays</label>
+          <input type="text" id="billing-country" placeholder="France" />
+        </div>
+        <button class="validate-address">Valider</button>
+      </div>
+      <div class="address-summary hidden"></div>
+    </div>
+
+    <!-- Adresse de livraison -->
+    <div class="address-block" id="shipping-address">
+      <h3 class="address-header">Adresse de livraison</h3>
+      <label style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+        <input type="checkbox" id="same-as-billing" />
+        Même que facturation
+      </label>
+      <div class="address-fields">
+        <div class="form-group">
+          <label>Nom complet</label>
+          <input type="text" id="shipping-name" placeholder="Jean Dupont" />
+        </div>
+        <div class="form-group">
+          <label>Adresse</label>
+          <input type="text" id="shipping-street" placeholder="12 rue de la République" />
+        </div>
+        <div class="form-group">
+          <label>Code postal</label>
+          <input type="text" id="shipping-zip" placeholder="75001" />
+        </div>
+        <div class="form-group">
+          <label>Ville</label>
+          <input type="text" id="shipping-city" placeholder="Paris" />
+        </div>
+        <div class="form-group">
+          <label>Pays</label>
+          <input type="text" id="shipping-country" placeholder="France" />
+        </div>
+        <button class="validate-address">Valider</button>
+      </div>
+      <div class="address-summary hidden"></div>
+    </div>
+  </section>
+
+  <!-- JS -->
+  <script src="../js/article-manager.js"></script>
+  <script src="../js/cart-manager.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      CartManager.init();
+      ArticleManager.init();
+
+      // Gestion ouverture/fermeture adresses
+      ["billing", "shipping"].forEach(type => {
+        const block = document.getElementById(`${type}-address`);
+        const header = block.querySelector(".address-header");
+        const fields = block.querySelector(".address-fields");
+        const summary = block.querySelector(".address-summary");
+        const validateBtn = block.querySelector(".validate-address");
+
+        header.addEventListener("click", () => {
+          fields.classList.toggle("hidden");
+          summary.classList.toggle("hidden");
+        });
+
+        validateBtn.addEventListener("click", e => {
+          e.preventDefault();
+          const data = {
+            name: document.getElementById(`${type}-name`)?.value || "",
+            street: document.getElementById(`${type}-street`)?.value || "",
+            zip: document.getElementById(`${type}-zip`)?.value || "",
+            city: document.getElementById(`${type}-city`)?.value || "",
+            country: document.getElementById(`${type}-country`)?.value || ""
+          };
+          summary.innerHTML = `
+            <strong>${data.name}</strong><br>
+            ${data.street}<br>
+            ${data.zip} ${data.city}<br>
+            ${data.country}
+          `;
+          fields.classList.add("hidden");
+          summary.classList.remove("hidden");
+        });
+      });
+
+      // Cache auto des champs livraison si "Même que facturation"
+      const sameBox = document.getElementById("same-as-billing");
+      const shippingFields = document.querySelector("#shipping-address .address-fields");
+      sameBox.addEventListener("change", () => {
+        shippingFields.classList.toggle("hidden", sameBox.checked);
+      });
+    });
+  </script>
+</body>
+</html>
