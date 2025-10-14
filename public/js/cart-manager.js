@@ -111,15 +111,11 @@
       document.dispatchEvent(new CustomEvent(DEFAULTS.stateEventName, { detail: state }));
     };
 
-    checkoutBtn.onclick = () => {
-      // SIMPLE demo behaviour: alert + clear
-      alert(`Checkout — total ${formatCurrency(total)}\n(Implémenter le flow réel)`);
-      // optionally clear
-      state = {};
-      saveState(state);
-      render(state, panel);
-      document.dispatchEvent(new CustomEvent(DEFAULTS.stateEventName, { detail: state }));
-    };
+checkoutBtn.onclick = () => {
+  // ✅ On ne vide plus le panier !
+  document.dispatchEvent(new CustomEvent("cart:checkout", { detail: state }));
+};
+
   }
 
   function addItemToState(state, item) {

@@ -34,6 +34,7 @@ header {
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
+
 .header-left,
 .header-center,
 .header-right {
@@ -279,4 +280,362 @@ main {
   #addresses-section {
     margin-right: 0;
   }
+}
+.hidden {
+  display: none !important;
+}
+
+header .header-right {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+header .header-right button {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+header .header-right .primary {
+  background: #0070f3;
+  color: white;
+}
+
+header .header-right .secondary {
+  background: #f0f0f0;
+}
+
+
+
+/* ======= MODALS ======= */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  transition: opacity 0.3s ease;
+  overflow: hidden; /* empêche le scroll global */
+}
+
+.modal.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Conteneur de la modale */
+/* === MODAL STYLE UPGRADE === */
+.modal-content {
+  background: #fff;
+  padding: 2rem 2.2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  width: 480px;
+  margin-top: 100px;
+  max-width: 90%;
+  max-height: 70%;
+  overflow-y: auto;
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+  font-family: "Segoe UI", Roboto, sans-serif;
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 1.2rem;
+  font-size: 1.4rem;
+  color: #222;
+  font-weight: 600;
+  text-align: center;
+}
+
+.modal-content label {
+  display: block;
+  font-weight: 500;
+  color: #444;
+  margin-bottom: 0.3rem;
+  margin-top: 0.8rem;
+}
+
+.modal-content input,
+.modal-content select {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+  background: #fafafa;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modal-content input:focus,
+.modal-content select:focus {
+  border-color: #0070f3;
+  box-shadow: 0 0 0 3px rgba(0, 112, 243, 0.15);
+  outline: none;
+}
+
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  font-size: 1.6rem;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.2s ease;
+}
+.close-btn:hover {
+  color: #000;
+}
+
+.env-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-top: 1.6rem;
+}
+
+.env-actions button {
+  flex: 1;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: transform 0.1s ease, background 0.2s ease;
+}
+
+.env-actions button:hover {
+  transform: translateY(-1px);
+}
+
+button.primary {
+  background: #0070f3;
+  color: #fff;
+}
+button.primary:hover {
+  background: #005dd1;
+}
+
+button.danger {
+  background: #e74c3c;
+  color: #fff;
+}
+button.danger:hover {
+  background: #c0392b;
+}
+
+button.secondary {
+  background: #f4f4f4;
+  color: #333;
+}
+button.secondary:hover {
+  background: #e0e0e0;
+}
+
+/* Cards modal specific */
+#test-cards-container {
+  margin-top: 1rem;
+}
+#test-cards-container table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+#test-cards-container th {
+  text-align: left;
+  background: #f9f9f9;
+  padding: 0.6rem;
+  font-weight: 600;
+  border-bottom: 2px solid #ddd;
+}
+#test-cards-container td {
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px solid #eee;
+}
+#test-cards-container input {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0.3rem 0.4rem;
+  text-align: center;
+  width: 100%;
+  font-family: monospace;
+}
+#test-cards-container tr:hover {
+  background: #f7faff;
+}
+
+/* ---- Bloc paiement ---- */
+#payment-section {
+  padding: 2rem;
+  background: #fff;
+  border-top: 1px solid #eee;
+  display: none;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#payment-section.visible {
+ display: flex;
+  flex-direction: column;
+}
+
+#payment-section h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+
+/* ======================================================
+   💳 Bloc de paiement — Formulaire S2S amélioré
+   ====================================================== */
+
+#payment-section {
+  background: #fff;
+  margin: 3rem auto;
+  padding: 2.5rem 3rem;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateY(15px);
+}
+
+#payment-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#payment-section h2 {
+  text-align: center;
+  color: #1e2a38;
+  font-size: 1.6rem;
+  margin-bottom: 2rem;
+  letter-spacing: 0.3px;
+}
+
+#s2s-payment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+}
+
+/* Champs standards */
+#s2s-payment-form .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+#s2s-payment-form label {
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: #333;
+}
+
+#s2s-payment-form input {
+  padding: 0.8rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#s2s-payment-form input:focus {
+  border-color: #0070f3;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 112, 243, 0.15);
+}
+
+/* Ligne combinée Expiration + CVV */
+/* Correction d'alignement Expiration / CVV */
+.form-row {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end; /* ✅ aligne le bas des champs */
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.form-row .form-group input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+/* Bouton payer */
+#s2s-payment-form button.primary {
+  background: #0070f3;
+  color: #fff;
+  border: none;
+  padding: 1rem;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.1s ease;
+  margin-top: 1rem;
+}
+
+#s2s-payment-form button.primary:hover {
+  background: #005ec2;
+  transform: translateY(-1px);
+}
+
+#s2s-payment-form button.primary:active {
+  transform: translateY(0);
+}
+
+/* Animation */
+#payment-section.visible {
+  animation: fadeInUp 0.35s ease forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.address-summary {
+  background: #f7f8fa;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  position: relative;
+}
+
+.address-summary .edit-address {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  color: #0070f3;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.address-summary .edit-address:hover {
+  text-decoration: underline;
 }

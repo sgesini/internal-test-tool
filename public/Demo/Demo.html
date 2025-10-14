@@ -9,12 +9,18 @@
 
 <body>
   <header>
-    <div class="header-left">
-      <a href="../index.html" class="back-home-btn">← Home</a>
-    </div>
-    <div class="header-center">🛍️ Test Merchant</div>
-    <div class="header-right"></div>
-  </header>
+  <div class="header-left">
+    <a href="../index.html" class="back-home-btn">← Home</a>
+  </div>
+
+  <div class="header-center">🛍️ Test Merchant</div>
+
+  <div class="header-right">
+    <button id="open-env-modal" class="primary">Select Environment</button>
+    <button id="open-test-cards" class="secondary">Show Test Cards</button>
+  </div>
+</header>
+
 
   <main>
     <!-- zone des articles -->
@@ -56,119 +62,145 @@
 
   <!-- 🔽 Bloc adresses client -->
   <section id="addresses-section">
-    <h2>Adresses du client</h2>
 
-    <!-- Adresse de facturation -->
-    <div class="address-block" id="billing-address">
-      <h3 class="address-header">Adresse de facturation</h3>
-      <div class="address-fields">
-        <div class="form-group">
-          <label>Nom complet</label>
-          <input type="text" id="billing-name" placeholder="Jean Dupont" />
-        </div>
-        <div class="form-group">
-          <label>Adresse</label>
-          <input type="text" id="billing-street" placeholder="12 rue de la République" />
-        </div>
-        <div class="form-group">
-          <label>Code postal</label>
-          <input type="text" id="billing-zip" placeholder="75001" />
-        </div>
-        <div class="form-group">
-          <label>Ville</label>
-          <input type="text" id="billing-city" placeholder="Paris" />
-        </div>
-        <div class="form-group">
-          <label>Pays</label>
-          <input type="text" id="billing-country" placeholder="France" />
-        </div>
-        <button class="validate-address">Valider</button>
-      </div>
-      <div class="address-summary hidden"></div>
+  <!-- Adresse de facturation -->
+  <div class="address-block" id="billing-address">
+  <h3 class="address-header">Adresse de facturation</h3>
+
+  <div class="address-fields">
+    <div class="form-group"><label>Nom complet</label><input type="text" id="billing-name" placeholder="Jean Dupont" /></div>
+    <div class="form-group"><label>Adresse</label><input type="text" id="billing-street" placeholder="12 rue de la République" /></div>
+    <div class="form-group"><label>Code postal</label><input type="text" id="billing-zip" placeholder="75001" /></div>
+    <div class="form-group"><label>Ville</label><input type="text" id="billing-city" placeholder="Paris" /></div>
+    <div class="form-group"><label>Pays</label><input type="text" id="billing-country" placeholder="France" /></div>
+    <button class="validate-address">Valider</button>
+  </div>
+
+  <!-- ✅ Bouton Modifier ajouté ici -->
+  <div class="address-summary hidden">
+    <div class="summary-content"></div>
+    <button class="edit-address">Modifier</button>
+  </div>
+</div>
+
+
+  <!-- Adresse de livraison -->
+ <div class="address-block" id="shipping-address">
+  <h3 class="address-header">Adresse de livraison</h3>
+
+  <label style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+    <input type="checkbox" id="same-as-billing" />
+    Même que facturation
+  </label>
+
+  <div class="address-fields">
+    <div class="form-group"><label>Nom complet</label><input type="text" id="shipping-name" placeholder="Jean Dupont" /></div>
+    <div class="form-group"><label>Adresse</label><input type="text" id="shipping-street" placeholder="12 rue de la République" /></div>
+    <div class="form-group"><label>Code postal</label><input type="text" id="shipping-zip" placeholder="75001" /></div>
+    <div class="form-group"><label>Ville</label><input type="text" id="shipping-city" placeholder="Paris" /></div>
+    <div class="form-group"><label>Pays</label><input type="text" id="shipping-country" placeholder="France" /></div>
+    <button class="validate-address">Valider</button>
+  </div>
+
+  <!-- ✅ Bouton Modifier ajouté ici aussi -->
+  <div class="address-summary hidden">
+    <div class="summary-content"></div>
+    <button class="edit-address">Modifier</button>
+  </div>
+</div>
+
+
+
+
+
+<!-- 🔽 Bloc Paiement (caché par défaut) -->
+<section id="payment-section" class="hidden">
+  <h2>Paiement sécurisé</h2>
+  <form id="s2s-payment-form">
+    <div class="form-group">
+      <label>Nom sur la carte</label>
+      <input type="text" name="cardholder" id="cardholder" placeholder="Jean Dupont" required />
     </div>
 
-    <!-- Adresse de livraison -->
-    <div class="address-block" id="shipping-address">
-      <h3 class="address-header">Adresse de livraison</h3>
-      <label style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
-        <input type="checkbox" id="same-as-billing" />
-        Même que facturation
-      </label>
-      <div class="address-fields">
-        <div class="form-group">
-          <label>Nom complet</label>
-          <input type="text" id="shipping-name" placeholder="Jean Dupont" />
-        </div>
-        <div class="form-group">
-          <label>Adresse</label>
-          <input type="text" id="shipping-street" placeholder="12 rue de la République" />
-        </div>
-        <div class="form-group">
-          <label>Code postal</label>
-          <input type="text" id="shipping-zip" placeholder="75001" />
-        </div>
-        <div class="form-group">
-          <label>Ville</label>
-          <input type="text" id="shipping-city" placeholder="Paris" />
-        </div>
-        <div class="form-group">
-          <label>Pays</label>
-          <input type="text" id="shipping-country" placeholder="France" />
-        </div>
-        <button class="validate-address">Valider</button>
-      </div>
-      <div class="address-summary hidden"></div>
+    <div class="form-group">
+      <label>Numéro de carte</label>
+      <input type="text" name="card-number" id="card-number" placeholder="4111 1111 1111 1111" required />
     </div>
-  </section>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date d’expiration (MM/AA)</label>
+        <input type="text" name="expiry" id="expiry" placeholder="12/30" required />
+      </div>
+
+      <div class="form-group">
+        <label>CVV</label>
+        <input type="text" name="cvv" id="cvv" placeholder="123" required />
+      </div>
+    </div>
+
+    <button type="submit" class="primary">Payer maintenant</button>
+  </form>
+</section>
+
+
+<!-- 🌍 Modal Environnement -->
+<div id="env-modal" class="modal hidden">
+  <div class="modal-content">
+    <span id="close-env-modal" class="close-btn">&times;</span>
+    <h3>Choose an Environment</h3>
+
+    <div id="env-panel" class="panel">
+      <label for="env-select">Select an environment:</label>
+      <select id="env-select">
+        <option value="">-- Choose --</option>
+        <option value="new">+ New environment</option>
+      </select>
+
+      <label>Name:</label>
+      <input type="text" id="env-name" placeholder="Environment name" />
+
+      <label>Public Key ID:</label>
+      <input type="text" id="env-public-key-id" placeholder="ex: key_sandbox_123" />
+
+      <label>Public Key:</label>
+      <input type="text" id="env-public-key" placeholder="ex: pk_live_abc" />
+
+      <label>Identifier:</label>
+      <input type="text" id="env-identifier" placeholder="ex: IDENTIFIER_123" />
+
+      <label>Secret Key:</label>
+      <input type="text" id="env-secret-key" placeholder="Secret Key" />
+
+      <div class="env-actions">
+        <button id="use-env" class="primary">Use</button>
+        <button id="delete-env" class="danger">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 💳 Modal Cartes de test -->
+<div id="test-cards-modal" class="modal hidden">
+  <div class="modal-content">
+    <span id="close-test-cards" class="close-btn">&times;</span>
+    <h3>Sandbox test cards (click to copy PAN)</h3>
+    <div id="test-cards-container"></div>
+  </div>
+</div>
+
 
   <!-- JS -->
-  <script src="../js/article-manager.js"></script>
-  <script src="../js/cart-manager.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      CartManager.init();
-      ArticleManager.init();
+<script src="../js/article-manager.js"></script>
+<script src="../js/cart-manager.js"></script>
+<script src="js/address-manager.js"></script>
+<script src="js/checkout-manager.js"></script>
+<script src="js/payment-form.js"></script>
+<script src="../js/env-manager.js"></script>
+<script src="../js/test-cards.js"></script>
+<script src="js/modal-manager.js"></script>
+<script src="js/main.js"></script>
 
-      // Gestion ouverture/fermeture adresses
-      ["billing", "shipping"].forEach(type => {
-        const block = document.getElementById(`${type}-address`);
-        const header = block.querySelector(".address-header");
-        const fields = block.querySelector(".address-fields");
-        const summary = block.querySelector(".address-summary");
-        const validateBtn = block.querySelector(".validate-address");
 
-        header.addEventListener("click", () => {
-          fields.classList.toggle("hidden");
-          summary.classList.toggle("hidden");
-        });
-
-        validateBtn.addEventListener("click", e => {
-          e.preventDefault();
-          const data = {
-            name: document.getElementById(`${type}-name`)?.value || "",
-            street: document.getElementById(`${type}-street`)?.value || "",
-            zip: document.getElementById(`${type}-zip`)?.value || "",
-            city: document.getElementById(`${type}-city`)?.value || "",
-            country: document.getElementById(`${type}-country`)?.value || ""
-          };
-          summary.innerHTML = `
-            <strong>${data.name}</strong><br>
-            ${data.street}<br>
-            ${data.zip} ${data.city}<br>
-            ${data.country}
-          `;
-          fields.classList.add("hidden");
-          summary.classList.remove("hidden");
-        });
-      });
-
-      // Cache auto des champs livraison si "Même que facturation"
-      const sameBox = document.getElementById("same-as-billing");
-      const shippingFields = document.querySelector("#shipping-address .address-fields");
-      sameBox.addEventListener("change", () => {
-        shippingFields.classList.toggle("hidden", sameBox.checked);
-      });
-    });
-  </script>
 </body>
 </html>
