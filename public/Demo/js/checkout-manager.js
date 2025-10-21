@@ -15,6 +15,15 @@ window.CheckoutManager = (function () {
     });
   }
 
+document.addEventListener("cart:updated", (e) => {
+  const checkoutBtn = document.querySelector(".checkout");
+  if (!checkoutBtn) return;
+
+  const cartState = e.detail || {};
+  checkoutBtn.disabled = Object.keys(cartState).length === 0;
+});
+
+
   function updateCheckoutState() {
     const checkoutBtn = document.querySelector(".checkout");
     const cartNotEmpty = (CartManager.getTotalItems && CartManager.getTotalItems() > 0);
@@ -25,6 +34,15 @@ window.CheckoutManager = (function () {
   function init() {
     const checkoutBtn = document.querySelector(".checkout");
     const paymentSection = document.getElementById("payment-section");
+    // 🔁 Vérifie l'état initial du panier après un court délai
+setTimeout(() => {
+  const cartState = CartManager.getState ? CartManager.getState() : {};
+  const checkoutBtn = document.querySelector(".checkout");
+  if (checkoutBtn) {
+    checkoutBtn.disabled = Object.keys(cartState).length === 0;
+  }
+}, 100);
+
 
     // champs adresses
     document.querySelectorAll("#addresses-section input").forEach(input => {

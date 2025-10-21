@@ -18,3 +18,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   console.log("✅ Demo Shop initialized");
 });
+
+// main.js
+window.StepManager = (function() {
+  function setStep(stepNumber) {
+    const steps = document.querySelectorAll("#checkout-steps .step");
+    steps.forEach((el) => {
+      const n = Number(el.dataset.step);
+      el.classList.remove("active", "completed");
+      if (n < stepNumber) el.classList.add("completed");
+      else if (n === stepNumber) el.classList.add("active");
+    });
+  }
+
+  return { setStep };
+})();

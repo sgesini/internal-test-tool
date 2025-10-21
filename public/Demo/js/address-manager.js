@@ -182,8 +182,22 @@ if (shippingBlock.dataset.collapsed === "true") {
       el.addEventListener("change", saveAddresses);
     });
 
-    // load au démarrage
-    loadAddresses();
+// 🧩 Load au démarrage + replie automatiquement les blocs si remplis
+loadAddresses();
+
+// Après le chargement, replie les adresses si elles sont déjà complètes
+["billing", "shipping"].forEach((type) => {
+  const name = document.getElementById(`${type}-name`)?.value?.trim();
+  const street = document.getElementById(`${type}-street`)?.value?.trim();
+  const zip = document.getElementById(`${type}-zip`)?.value?.trim();
+  const city = document.getElementById(`${type}-city`)?.value?.trim();
+  const country = document.getElementById(`${type}-country`)?.value?.trim();
+
+  const hasData = name && street && zip && city && country;
+  if (hasData) {
+    collapseAddress(type);
+  }
+});
   }
 
   return { init, saveAddresses, loadAddresses, collapseAddress, expandAddress };

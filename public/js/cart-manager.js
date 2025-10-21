@@ -145,6 +145,8 @@ checkoutBtn.onclick = () => {
     render(state, panel);
     // broadcast initial state so article badges can update
     document.dispatchEvent(new CustomEvent(opts.stateEventName, { detail: state }));
+    document.dispatchEvent(new CustomEvent("cart:updated", { detail: state }));
+
 
     // Listen to add/remove events
     document.addEventListener(opts.addEventName, (e) => {

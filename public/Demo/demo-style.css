@@ -76,6 +76,11 @@ main {
   gap: 1.5rem;
   justify-content: flex-start;
 }
+.articles,
+#addresses-section,
+#payment-section {
+  margin-top: 0 !important; /* empêche les décalages verticaux */
+}
 
 /* ---- Article cards ---- */
 .article-card {
@@ -221,12 +226,13 @@ main {
 /* ---- Adresses client ---- */
 #addresses-section {
   padding: 2rem;
-  background: #fff;
-  border-top: 1px solid #eee;
   display: flex;
   flex-direction: column;
   gap: 2rem;
   margin-right: 350px; /* pour ne pas passer sous le panneau */
+  max-width: 70%;
+  margin-left: 20px;
+  padding-top: 0.5rem !important; /* réduit légèrement le vide au-dessus */
 }
 
 #addresses-section h2 {
@@ -263,6 +269,47 @@ main {
   padding: 0.5rem 0.7rem;
   font-size: 1rem;
 }
+
+/* ===== Brand logos inside the card number input (scoped) ===== */
+#s2s-payment-form .card-number-group { position: relative; }
+
+#s2s-payment-form #card-number {
+  padding-right: 96px; /* space for logos on the right */
+}
+
+/* logo tray anchored inside the input group */
+#s2s-payment-form #card-brand {
+  position: absolute;
+  top: 65%;
+  right: 0px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;   /* allow clicks on logos */
+}
+
+/* logo visuals */
+#s2s-payment-form #card-brand img {
+  height: 22px;
+  width: auto;
+  cursor: pointer;
+  opacity: 0.75;
+  transition: transform 0.2s ease, opacity 0.2s ease, outline-color 0.2s ease;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,.2));
+}
+
+#s2s-payment-form #card-brand img:hover { opacity: 1; transform: scale(1.05); }
+#s2s-payment-form #card-brand img.selected {
+  opacity: 1;
+  transform: scale(1.1);
+  outline: 2px solid #0070f3;
+  border-radius: 4px;
+}
+
+/* make sure nothing else conflicts */
+#s2s-payment-form .brand-output { margin: 0; }
+
 
 /* ---- Responsive ---- */
 @media (max-width: 900px) {
@@ -503,11 +550,11 @@ button.secondary:hover {
 
 #payment-section {
   background: #fff;
-  margin: 3rem auto;
+  margin-left: 22.5%;
   padding: 2.5rem 3rem;
   border-radius: 14px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-  max-width: 600px;
+  max-width: 400px;
   transition: all 0.3s ease;
   opacity: 0;
   transform: translateY(15px);
@@ -547,15 +594,12 @@ button.secondary:hover {
 #s2s-payment-form input {
   padding: 0.8rem 0.9rem;
   border-radius: 8px;
-  border: 1px solid #ccc;
   font-size: 1rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 #s2s-payment-form input:focus {
-  border-color: #0070f3;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 112, 243, 0.15);
 }
 
 /* Ligne combinée Expiration + CVV */
@@ -617,10 +661,8 @@ button.secondary:hover {
 
 
 .address-summary {
-  background: #f7f8fa;
   border-radius: 8px;
   padding: 1rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   position: relative;
 }
 
@@ -638,4 +680,194 @@ button.secondary:hover {
 
 .address-summary .edit-address:hover {
   text-decoration: underline;
+}
+
+#card-number {
+  padding-right: 90px; /* espace pour les logos */
+}
+
+#card-brand {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.card-brand.visa { color: #1a1f71; }
+.card-brand.mastercard { color: #eb001b; }
+.card-brand.amex { color: #007bc1; }
+.card-brand.cb { color: #0093d0; }
+
+#card-brand img {
+  height: 22px;
+  width: auto;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
+}
+
+#card-brand img[src=""] {
+  display: none;
+}
+
+#card-brand img:hover {
+  transform: scale(1.05);
+  opacity: 1;
+}
+#card-brand img.selected {
+  opacity: 1;
+  transform: scale(1.1);
+  outline: 2px solid #0070f3;
+  border-radius: 4px;
+}
+
+.brand-output {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  width: 100px;
+  height: 36px;
+}
+
+.brand-output.visa::before {
+  content: url("https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg");
+  height: 16px;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+.brand-output.mastercard::before {
+  content: url("https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg");
+  height: 16px;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+/* ========= Détection de marque (Brand Detector) ========= */
+/* ========= Bloc Numéro de carte ========= */
+.card-number-group {
+  margin-bottom: 16px;
+}
+
+.card-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding-right: 8px; /* juste à droite pour espacer le logo */
+  transition: border-color 0.2s ease;
+}
+
+.card-input-wrapper:focus-within {
+  border-color: #2563eb; /* bleu focus */
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.card-input-wrapper input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  padding: 10px 12px;
+  border-radius: 6px;
+}
+
+/* ========= Zone du logo ========= */
+.brand-output {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 24px;
+  overflow: hidden;
+}
+
+.brand-output img {
+  width: auto;
+  height: 100px;
+  object-fit: contain;
+  display: block;
+  transition: opacity 0.2s ease;
+  opacity: 0;
+}
+
+/* visible seulement si un logo est chargé */
+.brand-output img.visible {
+  opacity: 1;
+}
+
+/* Pour éviter les marges internes héritées */
+.form-group input,
+.card-input-wrapper input {
+  margin: 0;
+  box-shadow: none;
+}
+
+
+/* ========= Logos spécifiques ========= */
+.brand-output.visa img {
+  content: url("https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg");
+}
+
+.brand-output.mastercard img {
+  content: url("https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg");
+}
+
+.brand-output.cb img {
+  content: url("https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Logo_GIE_CB_%282024%29.svg/1024px-Logo_GIE_CB_%282024%29.svg.png");
+}
+
+.brand-output.maestro img {
+  content: url("https://upload.wikimedia.org/wikipedia/commons/0/04/Maestro_logo.svg");
+}
+
+.brand-logos {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.brand-logos.visible {
+  opacity: 1;
+}
+
+.brand-logo {
+  height: 24px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+
+/* ======================================================
+   Titres d’étapes du checkout
+   ====================================================== */
+.checkout-step-title {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1e2a38;
+  padding: 1rem 0.5rem;
+  margin: 2.5rem 0 1rem;
+  border-radius: 10px;
+  letter-spacing: 0.3px;
+  max-width: 100%;
+}
+
+.checkout-step-title:first-of-type {
+  margin-top: 1rem;
+}
+
+.checkout-step-title span.step-number {
+  background: #0070f3;
+  color: #fff;
+  padding: 0.3rem 0.7rem;
+  border-radius: 50%;
+  font-size: 1rem;
+  margin-right: 0.5rem;
 }

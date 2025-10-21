@@ -80,6 +80,115 @@ window.PaymentUtils = (() => {
     return false;
   }
 
+  // ==================================================
+// 💳 Détection automatique du type de carte (Brand Detector)
+// ==================================================
+function initBrandDetector(inputSelector, outputSelector) {
+  const input = document.querySelector(inputSelector);
+  const output = document.querySelector(outputSelector);
+  if (!input || !output) return;
+
+  if (!window.dalenys || !window.dalenys.brandDetector) {
+    console.warn("[PaymentUtils] dalenys.brandDetector non chargé !");
+    return;
+  }
+
+  const detector = window.dalenys.brandDetector;
+  let selectedBrand = null; // ✅ pour garder la marque choisie
+
+  const updateSelectedBrand = (brand) => {
+    selectedBrand = brand;
+    output.querySelectorAll("img").forEach((img) => {
+      img.classList.toggle("selected", img.dataset.brand === brand);
+    });
+  };
+
+  // Récupération depuis le champ
+  input.addEventListener("input", () => {
+    const value = input.value.replace(/\D/g, "").substring(0, 19);
+    input.value = value.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
+
+    const clean = value.replace(/\D/g, "");
+    output.innerHTML = "";
+
+    if (clean.length < 6) return;
+
+    const bin = clean.substring(0, 8);
+    detector.detectBrandsByBin(bin, (brands) => {
+      output.innerHTML = "";
+      if (!brands || brands.length === 0) return;
+
+      brands.forEach((b) => {
+        const brand = b.brand.toLowerCase();
+        const img = document.createElement("img");
+        img.dataset.brand = brand;
+
+        switch (brand) {
+          case "visa":
+            img.src = "https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg";
+            break;
+          case "mastercard":
+            img.src = "https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg";
+            break;
+          case "cb":
+            img.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Logo_GIE_CB_%282024%29.svg/1024px-Logo_GIE_CB_%282024%29.svg.png";
+            break;
+          case "maestro":
+            img.src = "https://upload.wikimedia.org/wikipedia/commons/0/04/Maestro_logo.svg";
+            break;
+        }
+
+        const brandList = brands.map(b => b.brand.toLowerCase());
+        if (brandList.includes('cb')) {
+          updateSelectedBrand('cb');
+        } else if (brandList.length === 1) {
+          updateSelectedBrand(brandList[0]);
+        }
+
+        img.alt = brand;
+        img.classList.add("brand-logo");
+
+        // ✅ Sélection au clic
+        img.addEventListener("click", () => updateSelectedBrand(brand));
+
+        output.appendChild(img);
+      });
+
+      // Pré-sélection automatique s’il n’y a qu’une seule brand
+      if (brands.length === 1) updateSelectedBrand(brands[0].brand.toLowerCase());
+    });
+  });
+
+  // ✅ Exporte la marque choisie globalement
+  window.PaymentUtils.getSelectedBrand = () => selectedBrand;
+}
+
+
+  // 💳 Auto-format du champ numéro de carte (espaces visuels tous les 4 chiffres)
+  function setupCardAutoFormat(selector = "#card-number") {
+    const input = document.querySelector(selector);
+    if (!input) return;
+
+    input.addEventListener("input", (e) => {
+      const cursorPos = input.selectionStart;
+      const raw = input.value.replace(/\D/g, ""); // enlève tout sauf chiffres
+      const spaced = raw.replace(/(.{4})/g, "$1 ").trim(); // espace tous les 4 chiffres
+
+      // ⚙️ Mise à jour uniquement si différente pour éviter le clignotement
+      if (spaced !== input.value) {
+        const diff = spaced.length - input.value.length;
+        input.value = spaced;
+        input.selectionEnd = cursorPos + diff;
+      }
+    });
+
+    console.log("✨ Auto-format carte activé sur", selector);
+  }
+
+
+
+
+
   // 🔹 Exporte les fonctions globalement
   return {
     generateOrderId,
@@ -87,9 +196,10 @@ window.PaymentUtils = (() => {
     computeHash,
     processPayment,
     handle3DS,
+    initBrandDetector, // <-- ajouté ici
+    setupCardAutoFormat
   };
 })();
-
 
 // récupère le hfToken depuis l’URL si présent
 document.addEventListener("DOMContentLoaded", () => {
@@ -101,3 +211,53 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("✅ HFTOKEN injecté :", hfToken);
   }
 });
+
+
+// ======================================================
+// 🗓️ Auto-format pour la date d’expiration (affiche MM/YY mais renvoie MM-YY)
+// ======================================================
+function setupExpiryAutoFormat(selector = "#expiry") {
+  const input = document.querySelector(selector);
+  if (!input) return;
+
+  input.addEventListener("input", (e) => {
+    let value = input.value.replace(/\D/g, ""); // garde uniquement les chiffres
+    if (value.length > 4) value = value.substring(0, 4);
+
+    // ajoute automatiquement le "/" après les 2 premiers chiffres
+    if (value.length > 2) {
+      value = value.substring(0, 2) + "/" + value.substring(2);
+    }
+
+    input.value = value;
+  });
+
+  // empêche les caractères non numériques
+  input.addEventListener("keypress", (e) => {
+    if (!/[0-9]/.test(e.key)) e.preventDefault();
+  });
+
+  // corrige le collage (paste)
+  input.addEventListener("paste", (e) => {
+    e.preventDefault();
+    const pasted = (e.clipboardData || window.clipboardData).getData("text");
+    const clean = pasted.replace(/\D/g, "").substring(0, 4);
+    const formatted = clean.length > 2 ? clean.substring(0, 2) + "/" + clean.substring(2) : clean;
+    input.value = formatted;
+  });
+
+  // ✨ Nettoyage du format avant soumission
+  input.addEventListener("blur", () => {
+    let val = input.value.replace(/\D/g, ""); // ex: 1230
+    if (val.length === 4) {
+      const mm = val.substring(0, 2);
+      const yy = val.substring(2);
+      // enregistre le format final en data-value pour l’API
+      input.dataset.cleaned = `${mm}-${yy}`;
+    }
+  });
+
+  console.log("🗓️ Auto-format expiration (affiche MM/YY, renvoie MM-YY) activé sur", selector);
+}
+
+window.PaymentUtils.setupExpiryAutoFormat = setupExpiryAutoFormat;

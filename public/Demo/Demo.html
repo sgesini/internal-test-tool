@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Test Merchant – Demo Shop</title>
   <link rel="stylesheet" href="demo-style.css" />
+  <script type="text/javascript" src="https://js.sandbox.dalenys.com/brand-detector/v1/brand-detector.min.js"></script>
+  <script src="../js/payment-utils.js"></script>
+<script src="../js/form-handler.js"></script>
 </head>
 
 <body>
@@ -24,6 +27,11 @@
 
   <main>
     <!-- zone des articles -->
+     <!-- Étape 1 -->
+<h2 class="checkout-step-title">🛒 Étape 1 — Choix des articles</h2>
+<section class="articles">
+  <!-- tes articles -->
+
     <section class="articles">
       <div class="article-card" data-id="jean" data-name="Jean slim" data-price="2000">
         <img src="https://images.unsplash.com/photo-1584370848010-d7fe6bc767ec?auto=format&fit=crop&w=400&q=60" alt="Jean slim" />
@@ -59,10 +67,13 @@
       </div>
     </aside>
   </main>
+  </section>
 
   <!-- 🔽 Bloc adresses client -->
-  <section id="addresses-section">
+<section id="addresses-section">
+       <h2 class="checkout-step-title">🏠 Étape 2 — Adresses du client</h2>
 
+  <!-- les champs adresse -->
   <!-- Adresse de facturation -->
   <div class="address-block" id="billing-address">
   <h3 class="address-header">Adresse de facturation</h3>
@@ -108,24 +119,35 @@
     <button class="edit-address">Modifier</button>
   </div>
 </div>
+</section>
 
 
 
 
 
 <!-- 🔽 Bloc Paiement (caché par défaut) -->
+
+<!-- Étape 3 -->
+
+  <!-- ton form -->
 <section id="payment-section" class="hidden">
-  <h2>Paiement sécurisé</h2>
+    <h2 class="checkout-step-title">💳 Étape 3 — Paiement</h2>
   <form id="s2s-payment-form">
     <div class="form-group">
       <label>Nom sur la carte</label>
       <input type="text" name="cardholder" id="cardholder" placeholder="Jean Dupont" required />
     </div>
 
-    <div class="form-group">
-      <label>Numéro de carte</label>
-      <input type="text" name="card-number" id="card-number" placeholder="4111 1111 1111 1111" required />
-    </div>
+<div class="form-group card-number-group">
+  <label>Numéro de carte</label>
+  <div class="card-input-wrapper">
+    <input type="text" id="card-number" placeholder="4111 1111 1111 1111" required />
+    <div id="card-brand" class="brand-output"></div>
+  </div>
+</div>
+
+
+
 
     <div class="form-row">
       <div class="form-group">
@@ -142,6 +164,8 @@
     <button type="submit" class="primary">Payer maintenant</button>
   </form>
 </section>
+</section>
+
 
 
 <!-- 🌍 Modal Environnement -->
