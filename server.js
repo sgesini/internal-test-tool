@@ -108,7 +108,7 @@ app.post("/processPayment", async (req, res) => {
 
     // Corps du POST vers Dalenys
     const forwardBody = new URLSearchParams();
-    forwardBody.append("method", "payment");
+    forwardBody.append("method", cleanParams.OPERATIONTYPE || "payment");
     for (const [k, v] of Object.entries(cleanParams)) {
       forwardBody.append(`params[${k}]`, v);
     }
