@@ -98,7 +98,7 @@ PaymentUtils.setupExpiryAutoFormat("#expiry");
 
     const chosenBrand = PaymentUtils.getSelectedBrand?.();
 if (chosenBrand) {
-  params.BRAND = chosenBrand.toUpperCase();
+  params.SELECTEDBRAND = chosenBrand.toUpperCase();
   console.log("💳 Marque sélectionnée :", chosenBrand);
 }
 
@@ -114,7 +114,7 @@ if (expiryInput) {
   }
 }
 if (expiryInput && expiryInput.dataset.cleaned) {
-  params.expiry = expiryInput.dataset.cleaned; // ex: "12-30"
+  params.CARDVALIDITYDATE = expiryInput.dataset.cleaned; // ✅ Nom correct attendu par Dalenys
 }
 
 

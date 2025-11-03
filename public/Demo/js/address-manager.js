@@ -8,15 +8,17 @@ window.AddressManager = (function () {
 
   // 🧩 Construit le résumé HTML d'une adresse
   function buildSummaryHTML(type) {
-    const name    = byId(`${type}-name`)?.value || "";
+    const firstname    = byId(`${type}-firstname`)?.value || "";
+    const lastname    = byId(`${type}-lastname`)?.value || "";
     const street  = byId(`${type}-street`)?.value || "";
     const zip     = byId(`${type}-zip`)?.value || "";
     const city    = byId(`${type}-city`)?.value || "";
     const country = byId(`${type}-country`)?.value || "";
-    if (!name && !street && !zip && !city && !country)
+    if (!firstname && !lastname && !street && !zip && !city && !country)
       return "<em>Aucune adresse renseignée</em>";
     return `
-      <strong>${name}</strong><br>
+      <strong>${firstname} </strong><br>
+      <strong>${lastname}</strong><br>
       ${street}<br>
       ${zip} ${city}<br>
       ${country}
@@ -46,7 +48,7 @@ window.AddressManager = (function () {
   }
 
   function copyBillingToShipping() {
-    ["name", "street", "zip", "city", "country"].forEach((f) => {
+    ["firstname", "lastname", "street", "zip", "city", "country"].forEach((f) => {
       const src = byId(`billing-${f}`);
       const dst = byId(`shipping-${f}`);
       if (src && dst) dst.value = src.value;
@@ -54,7 +56,7 @@ window.AddressManager = (function () {
   }
 
   function setShippingReadonly(readonly) {
-    ["name", "street", "zip", "city", "country"].forEach((f) => {
+    ["firstname", "lastname", "street", "zip", "city", "country"].forEach((f) => {
       const el = byId(`shipping-${f}`);
       if (!el) return;
       if (readonly) el.setAttribute("readonly", "true");
@@ -66,14 +68,16 @@ window.AddressManager = (function () {
   function saveAddresses() {
     const data = {
       billing: {
-        name: byId("billing-name").value,
+        firstname: byId("billing-firstname").value,
+        lastname: byId("billing-lastname").value,
         street: byId("billing-street").value,
         zip: byId("billing-zip").value,
         city: byId("billing-city").value,
         country: byId("billing-country").value,
       },
       shipping: {
-        name: byId("shipping-name").value,
+        firstname: byId("shipping-firstname").value,
+        lastname: byId("shipping-lastname").value,
         street: byId("shipping-street").value,
         zip: byId("shipping-zip").value,
         city: byId("shipping-city").value,
@@ -164,7 +168,7 @@ if (shippingBlock.dataset.collapsed === "true") {
     });
 
     // synchronise à la volée
-    ["name","street","zip","city","country"].forEach(f => {
+    ["firstname","lastname","street","zip","city","country"].forEach(f => {
       const src = byId(`billing-${f}`);
       src?.addEventListener("input", () => {
         if (!sameBox.checked) return;
@@ -187,13 +191,14 @@ loadAddresses();
 
 // Après le chargement, replie les adresses si elles sont déjà complètes
 ["billing", "shipping"].forEach((type) => {
-  const name = document.getElementById(`${type}-name`)?.value?.trim();
+  const firstname = document.getElementById(`${type}-firstname`)?.value?.trim();
+  const lastname = document.getElementById(`${type}-lastname`)?.value?.trim();
   const street = document.getElementById(`${type}-street`)?.value?.trim();
   const zip = document.getElementById(`${type}-zip`)?.value?.trim();
   const city = document.getElementById(`${type}-city`)?.value?.trim();
   const country = document.getElementById(`${type}-country`)?.value?.trim();
 
-  const hasData = name && street && zip && city && country;
+  const hasData = firstname && lastname && street && zip && city && country;
   if (hasData) {
     collapseAddress(type);
   }
