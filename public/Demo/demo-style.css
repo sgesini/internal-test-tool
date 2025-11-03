@@ -229,8 +229,7 @@ main {
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  margin-right: 350px; /* pour ne pas passer sous le panneau */
-  max-width: 70%;
+  max-width: 100%;
   margin-left: 20px;
   padding-top: 0.5rem !important; /* réduit légèrement le vide au-dessus */
 }
@@ -245,6 +244,8 @@ main {
   border-radius: 8px;
   padding: 1.5rem;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  margin-left: 100px;
+  max-width: 70%;
 }
 
 .address-block h3 {
