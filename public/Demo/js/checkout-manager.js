@@ -58,11 +58,17 @@ setTimeout(() => {
     };
 
     checkoutBtn.addEventListener("click", () => {
-      if (checkoutBtn.disabled) return;
-      paymentSection.classList.remove("hidden");
-      paymentSection.classList.add("visible");
-      paymentSection.scrollIntoView({ behavior: "smooth" });
-    });
+  if (checkoutBtn.disabled) return;
+  paymentSection.classList.remove("hidden");
+  paymentSection.classList.add("visible");
+  paymentSection.scrollIntoView({ behavior: "smooth" });
+
+  // 🆕 Affiche la prévisualisation Dalenys une fois le paiement visible
+  if (window.PaymentForm && typeof PaymentForm.showPreview === "function") {
+    PaymentForm.showPreview();
+  }
+});
+
 
     updateCheckoutState();
   }

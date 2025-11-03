@@ -60,6 +60,17 @@
           <button class="checkout" disabled>Procéder au paiement</button>
         </div>
       </div>
+      <div id="dalenys-preview" class="dalenys-preview hidden">
+  <div class="preview-header">
+    🔍 <strong>Fields to be sent in API</strong><span class="info-icon" data-tooltip="This is a preview of the formatted fields extracted from this page. Note that some fields are hidden in the form, such as CLIENTIP, CLIENTUSERAGENT etc. These fields need to be extracted from the customer's browser.">?</span>
+
+    <span id="refresh-info" style="opacity:0.6;font-size:12px;margin-left:auto;">Auto update</span>
+  </div>
+  <div class="preview-content">
+    <p style="opacity: 0.7;">Aucune donnée disponible.</p>
+  </div>
+</div>
+
     </aside>
 
     <!-- Étape 2 : adresses -->
@@ -68,7 +79,13 @@
 
       <!-- Billing -->
       <div class="address-block" id="billing-address">
-        <h3 class="address-header">Adresse de facturation</h3>
+        <h3 class="address-header">Adresse de facturation
+            <span
+    class="info-icon"
+    onmouseover="PaymentForm.showMappingTooltip('billing', event)"
+    onmouseout="PaymentForm.hideTooltipOnMove()"
+  >?</span>
+        </h3>
 
         <div class="address-fields">
           <div class="form-group"><label>Prénom</label><input type="text" id="billing-firstname" placeholder="Jean" /></div>
@@ -88,7 +105,13 @@
 
       <!-- Shipping -->
       <div class="address-block" id="shipping-address">
-        <h3 class="address-header">Adresse de livraison</h3>
+        <h3 class="address-header">Adresse de livraison
+            <span
+    class="info-icon"
+    onmouseover="PaymentForm.showMappingTooltip('shipping', event)"
+    onmouseout="PaymentForm.hideTooltipOnMove()"
+  >?</span></h3>
+
 
         <label style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
           <input type="checkbox" id="same-as-billing" />
