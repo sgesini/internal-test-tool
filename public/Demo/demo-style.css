@@ -942,6 +942,8 @@ button.secondary:hover {
   background: #fff;
   border-top: 1px solid #e5e7eb;
 }
+
+
 .info-icon {
   display: inline-flex;
   align-items: center;
@@ -982,3 +984,37 @@ button.secondary:hover {
 .info-icon:hover::after {
   opacity: 1;
 }
+
+
+/* --- Icônes Dalenys dynamiques --- */
+.map-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: #2563eb; /* vert pour distinguer */
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 6px;
+}
+
+/* Style global du tooltip mapping */
+.mapping-tooltip {
+  position: absolute;
+  background: rgba(0,0,0,0.9);
+  color: white;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+  z-index: 9999;
+  display: none;
+  white-space: normal;
+}
+.mapping-tooltip b { color: white; }
+.mapping-tooltip .value { color: #7fff7f; font-family: monospace; }
