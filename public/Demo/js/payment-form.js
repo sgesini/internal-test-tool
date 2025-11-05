@@ -88,8 +88,10 @@ function buildHiddenFields() {
   
   function injectHiddenFields(e) {
     const form = e.target;
-    console.log("🧩 Injection des champs cachés avant form-handler (capture)...");
 
+
+    
+  console.log("🧩 Injection des champs cachés avant form-handler (capture)...");
     const cardNumber = byId("card-number")?.value.replace(/\s+/g, "") || "";
 // --- ensure helper
 function ensureHidden(form, name, value) {

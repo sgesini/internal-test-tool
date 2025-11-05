@@ -25,7 +25,20 @@
   </header>
 
   <div id="payment-wrapper">
+  <div id="usecase-pasteinput">
   <div id="use-cases-panel" class="panel"></div>
+    <!-- ======= Zone de paste / injection ======= -->
+<div id="paste-panel" class="panel">
+  <h3>Paste & Inject Parameters</h3>
+  <textarea id="paste-input" placeholder="Paste raw parameters here..." rows="8"
+            style="width:100%;border-radius:6px;border:1px solid var(--input-border-color);padding:8px;"></textarea>
+  <div style="margin-top:8px;">
+    <button id="paste-parse-btn" class="primary">Inject in form</button>
+    <span id="paste-feedback" style="margin-left:12px;font-weight:bold;"></span>
+  </div>
+</div>
+</div>
+
 
     <!-- ======= FORMULAIRE S2S ======= -->
 <form id="s2s-form" class="panel">
@@ -157,6 +170,7 @@
   <script src="../js/form-handler.js"></script>
   <script src="../js/script.js"></script>
   <script src="../js/test-cards.js"></script>
+  <script src="../js/paste-inject.js"></script>
 
 </body>
 </html>
