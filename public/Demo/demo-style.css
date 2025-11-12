@@ -243,7 +243,7 @@ main {
   background: #fafafa;
   border-radius: 8px;
   padding: 1.5rem;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 12px rgba(0, 0, 0, 32%);
   margin-left: 100px;
   max-width: 70%;
 }
@@ -552,9 +552,9 @@ button.secondary:hover {
 #payment-section {
   background: #fff;
   margin-left: 22.5%;
-  padding: 2.5rem 3rem;
+  padding: 2rem 2.5rem;
   border-radius: 14px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 12px rgba(0, 0, 0, 32%);
   max-width: 400px;
   transition: all 0.3s ease;
   opacity: 0;
