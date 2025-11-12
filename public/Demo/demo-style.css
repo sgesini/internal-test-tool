@@ -293,7 +293,7 @@ main {
 /* logo visuals */
 #s2s-payment-form #card-brand img {
   height: 22px;
-  width: auto;
+  width: 36px;
   cursor: pointer;
   opacity: 0.75;
   transition: transform 0.2s ease, opacity 0.2s ease, outline-color 0.2s ease;
@@ -577,7 +577,7 @@ button.secondary:hover {
 #s2s-payment-form {
   display: flex;
   flex-direction: column;
-  gap: 1.3rem;
+  gap: 0.5rem;
 }
 
 /* Champs standards */
@@ -731,11 +731,11 @@ button.secondary:hover {
   gap: 6px;
   margin-top: 4px;
   width: 100px;
-  height: 36px;
+  height: 34px;
 }
 
 .brand-output.visa::before {
-  content: url("https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/1599px-Visa_Inc._logo.svg.png");
+  content: url("https://corporate.visa.com/content/dam/VCOM/corporate/about-visa/images/visa-brandmark-blue-1960x622.png");
   height: 16px;
   vertical-align: middle;
   margin-right: 6px;
@@ -784,12 +784,12 @@ button.secondary:hover {
   align-items: center;
   justify-content: center;
   width: 100px;
-  height: 24px;
+  height: 34px;
   overflow: hidden;
 }
 
 .brand-output img {
-  width: auto;
+  width: 30px;
   height: 100px;
   object-fit: contain;
   display: block;
@@ -812,7 +812,7 @@ button.secondary:hover {
 
 /* ========= Logos spécifiques ========= */
 .brand-output.visa img {
-  content: url("https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg");
+  content: url("https://corporate.visa.com/content/dam/VCOM/corporate/about-visa/images/visa-brandmark-blue-1960x622.png");
 }
 
 .brand-output.mastercard img {
@@ -894,6 +894,7 @@ button.secondary:hover {
   background-color: #007bff;
   color: white;
 }
+
 
 .mapping-tooltip {
   position: absolute;

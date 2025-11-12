@@ -125,13 +125,13 @@ function initBrandDetector(inputSelector, outputSelector) {
 
         switch (brand) {
           case "visa":
-            img.src = "https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg";
+            img.src = "https://corporate.visa.com/content/dam/VCOM/corporate/about-visa/images/visa-brandmark-blue-1960x622.png";
             break;
           case "mastercard":
             img.src = "https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg";
             break;
           case "cb":
-            img.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Logo_GIE_CB_%282024%29.svg/1024px-Logo_GIE_CB_%282024%29.svg.png";
+            img.src = "/Resources/CB.svg";
             break;
           case "maestro":
             img.src = "https://upload.wikimedia.org/wikipedia/commons/0/04/Maestro_logo.svg";
