@@ -602,3 +602,7 @@ label {
 }
 
 
+input,textarea {
+  color:#fff;
+  background: #333;
+}
